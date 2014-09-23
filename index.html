@@ -1,7 +1,36 @@
 <html>
 <head>
+	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="index.css">
 </head>
 <body>
-	Hello, world!
+	<script src="jquery-2.1.1.min.js"></script>
+	<script src="main_page.js"></script>
+	<div id="header" class="flex col static">
+		<div id="navbar" class="flex row">
+			<a href="url">ABOUT</a>
+			<a href="url">SETTINGS</a>
+			<a href="url">LOGIN</a>
+		</div>
+		<div id="title" class="flex row x-align y-align unselectable">
+			PeopleSofter
+		</div>
+	</div>
+	<div id="main-content" class="flex row grow">
+		<div id="sidebar" class="flex col std-padding">
+			<div id="search-div" class="std-padding">
+				<input id="course-search-box" type="text" name="fname" placeholder="Type course criteria here">
+			</div>
+			<div id="card-parent" class="flex col">
+				<!-- cards go here -->
+			</div>
+		</div>
+		<div id="deck" class="flex col std-padding">
+			
+		</div>
+		<div id="info-display" class="flex col std-padding grow">
+			<img src="S7Schedule.PNG" class="flex col grow">
+		</div>
+	</div>
 </body>
 </html>

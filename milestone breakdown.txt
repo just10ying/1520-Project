@@ -1,0 +1,20 @@
+Milestone 2 (10/16): Web scraping and basic search by class number complete
+--- Web scraping & storing to database?
+--- search function on our site, data retrieval
+--- finalize-ish interface?
+
+Milestone 3 (10/30): Advanced searching and displaying search information to user using the interface
+--- Web scraping/storage
+--- searching across multiple criteria
+--- shopping cart/schedule functions & display
+
+Milestone 4 (11/13): Optimizing schedule for certain criteria such as morning classes / block schedules, etc.
+--- decision tree design/implementation
+------ morning
+------ block
+--- display (for multiple possible schedules?)
+
+Milestone 5 (12/5): hooking into external APIs like rate my professors and google maps to minimize distance / only professors with certain ratings
+--- rate my prof 
+--- google maps
+--- save function/export to actual peoplesoft? somehow???
