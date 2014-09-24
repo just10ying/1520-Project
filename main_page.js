@@ -1,7 +1,7 @@
 var numCards = 33;
 var numDeckCards = 4;
 
-var cardString = '<div class="course-card flex row std-padding std-margin unselectable" draggable="true" onclick="selectCard(this)"><table><tr><td>Name of Course</td><td>Professor</td></tr><tr><td>Time</td><td>Location</td></tr><tr><td>Credits</td><td>Class Number</td></tr></table></div>';
+var cardString = '<div class="course-card std-padding std-margin unselectable" draggable="true" onclick="selectCard(this)"><table><tr><td>Name of Course</td><td>Professor</td></tr><tr><td>Time</td><td>Location</td></tr><tr><td>Credits</td><td>Class Number</td></tr></table></div>';
 
 function NewCourse(name, professor, time, location, credits, classNumber, description) {
 	

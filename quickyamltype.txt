@@ -1,5 +1,0 @@
-class MainPage(webapp2.RequestHandler) :
-	def get(self) :
-		self.response.out.write(htmlVar)
-
-app = webapp2.WSGIAPPLICATION([('/', MainPage debug=true)])
