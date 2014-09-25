@@ -1,16 +1,42 @@
 // Populate the course list array
 var courseList = new Array();
-courseList.push(new Course("Computer Architecture", "Michael Bigrigg", "MoWe/11:00AM-12:15PM", "5505 SENSQ", "Credits: 3", "10829"));
-courseList.push(new Course("Intro to Operating Systems", "Jonathan Misurda", "MoWe/11:00AM-12:15PM", "0213 Cathedral", "Credits: 92", "38384"));
-courseList.push(new Course("Intro to MacroEconomics", "George Bush", "MoWe/11:00AM-12:15PM", "3084 Clapp", "Credits: 2", "38257"));
-courseList.push(new Course("Computer Organization", "Christine Lim", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289"));
-courseList.push(new Course("Intro to Violin 1", "Justin Ying", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289"));
-courseList.push(new Course("Psychology 0110", "Akane Tsumemori", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289"));
-courseList.push(new Course("Engineering Analysis 1", "Joey Sadecky", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289"));
-courseList.push(new Course("Data Structures", "Ethan Dale", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289"));
-courseList.push(new Course("Web Development Stuff", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289"));
+courseList.push(new Course("Computer Architecture", "Michael Bigrigg", "MoWe/11:00AM-12:15PM", "5505 Sennott Square", "Credits: 3", "10829", "Description"));
+courseList.push(new Course("Intro to Operating Systems", "Jonathan Misurda", "MoWe/11:00AM-12:15PM", "0213 Cathedral", "Credits: 92", "38384", "Description"));
+courseList.push(new Course("Intro to MacroEconomics", "George Bush", "MoWe/11:00AM-12:15PM", "3084 Clapp", "Credits: 2", "38257", "Description"));
+courseList.push(new Course("Computer Organization", "Christine Lim", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
+courseList.push(new Course("Intro to Violin 1", "Justin Ying", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
+courseList.push(new Course("Psychology 0110", "Akane Tsumemori", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
+courseList.push(new Course("Engineering Analysis 1", "Joey Sadecky", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
+courseList.push(new Course("Data Structures", "Ethan Dale", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
+courseList.push(new Course("Web Development Stuff", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
+
+//--------------------------------------------------------------------- Search Functions ---------------------------------------------------------------------------
+function searchKeyPress(event) {
+	// Clear cards from card-parent only:
+	$("#card-parent").children(".course-card").remove();
+	// If the user presses escape, clear the input field.
+	if (event.keyCode == 27) {
+		$("#course-search-box").val('');
+		return;
+	}
+	var searchString = $("#course-search-box").val().toLowerCase();
+	if (searchString.length > 0) {
+		courseList.forEach(function(course) {
+			for (field in course) {
+				var x = course[field].toLowerCase();
+				if (course[field].toLowerCase().indexOf(searchString) > -1) {
+					$("#card-parent").append(new CourseTable(course));
+					break;
+				}
+			}
+		});	
+	}
+}
 
 
+//--------------------------------------------------------------------- Card Functions ---------------------------------------------------------------------------
+
+// Creates a new course object
 function Course(name, professor, time, location, credits, classNumber, description) {
 	this.name = name;
 	this.professor = professor;
@@ -41,12 +67,6 @@ function CourseTable(course) {
 function newRowDiv(stringName) {
 	return $('<div class="row"></div').attr("title", stringName).text(stringName);
 }
-
-$(document).ready(function() {
-	for (var index = 0; index < courseList.length; index++) {
-		$("#card-parent").append(new CourseTable(courseList[index]));
-	}
-});
 
 function selectCard(card) {
 	$(card).toggleClass("selected");

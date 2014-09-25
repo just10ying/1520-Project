@@ -19,7 +19,7 @@
 	<div id="main-content" class="flex row grow">
 		<div id="sidebar" class="flex col std-margin h-edge-shadow">
 			<div id="search-div" class="flex row static std-padding">
-				<input id="course-search-box" type="text" name="fname" placeholder="Type course criteria here">
+				<input id="course-search-box" type="text" name="fname" placeholder="Type course criteria here" onkeyup="searchKeyPress(event)">
 			</div>
 			<div id="card-parent" class="flex col grow" ondrop="dropInSidebar(event)" ondragover="allowDrop(event)">
 				<!-- cards go here -->
