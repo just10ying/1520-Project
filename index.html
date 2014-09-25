@@ -17,19 +17,30 @@
 		</div>
 	</div>
 	<div id="main-content" class="flex row grow">
-		<div id="sidebar" class="flex col std-padding">
+		<div id="sidebar" class="flex col std-margin h-edge-shadow">
 			<div id="search-div" class="flex row static std-padding">
 				<input id="course-search-box" type="text" name="fname" placeholder="Type course criteria here">
 			</div>
-			<div id="card-parent">
+			<div id="card-parent" class="flex col grow" ondrop="dropInSidebar(event)" ondragover="allowDrop(event)">
 				<!-- cards go here -->
 			</div>
 		</div>
-		<div id="deck" class="flex col std-padding">
-			
+		<div id="deck" class="flex col std-padding h-edge-shadow" ondrop="dropInDeck(event)" ondragover="allowDrop(event)">
+			<!-- cards go here -->
 		</div>
 		<div id="info-display" class="flex col std-padding grow">
-			<img src="S7Schedule.PNG" class="flex col grow">
+			<table id="calendar-table">
+				<tr>
+					<td id="timesTD"></td>
+					<td id="SundayTD">Sunday</td>
+					<td id="MondayTD">Monday</td>
+					<td id="TuesdayTD">Tuesday</td>
+					<td id="WednesdayTD">Wednesday</td>
+					<td id="ThursdayTD">Thursday</td>
+					<td id="FridayTD">Friday</td>
+					<td id="SaturdayTD">Saturday</td>
+				</tr>
+			</table>
 		</div>
 	</div>
 </body>

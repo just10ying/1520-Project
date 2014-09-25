@@ -8,7 +8,7 @@ body {
 	width: 100%;
 }
 
-/* --------------------STYLE CSS------------------------- */
+/* --------------------SCAFFOLDING CSS------------------------- */
 
 .unselectable {
 	-webkit-user-select: none;
@@ -56,6 +56,25 @@ body {
 	padding: 5px;
 }
 
+/* STANDARD STYLING */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+::-webkit-scrollbar-track {
+	background: #eeeeee;
+}
+ 
+::-webkit-scrollbar-thumb {
+	background: #0288d1;
+}
+
+.h-edge-shadow {
+	border-right: 1px solid #AAAAAA;
+	box-shadow: 8px 0 10px -2px #CCCCCC;
+}
+
 /* --------------------------------------------- */
 #header {
 	color: white;
@@ -85,36 +104,58 @@ body {
 
 #sidebar {
 	width: 300px;
-	border-right: 1px solid black;
+	background-color: white;
+	margin-bottom: 0px;
+	padding: 5px 5px 0px 5px;
 }
 
 #search-div {
-	border-bottom: 1px solid #333333;
+	border-bottom: 1px solid #CCCCCC;
 }
 
 #course-search-box {
 	width: 100%;
-	height: 30px;
+	height: 35px;
+	font-size: 100%;
+	padding: 5px;
 }
 
 #card-parent {
+	padding: 5px 0px;
 	overflow-y: auto;
 }
 
 .course-card {
 	border: 1px solid black;
 	border-radius: 2px;
-	box-shadow: 2px 2px 1px #888888;
+	box-shadow: 2px 2px 2px 1px #888888;
+	font-size: 75%;
 	transition: .3s;
 }
 
 .course-card:hover {
-	background-color: #CCEBFF;
+	background-color: #e1f5fe;
 }
 
-.course-card > table {
-	width: 100%;
-	font-size: 75%;
+.course-card .card-col-1,
+.course-card .card-col-2 {
+	white-space: nowrap;
+	padding: 4px;
+	float: left;
+}
+
+.course-card .card-col-1 {
+	width: 60%;
+}
+
+.course-card .card-col-2 {
+	width: 40%;
+}
+
+.course-card .row {
+	padding: 2px;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .course-card.selected {
@@ -127,9 +168,19 @@ body {
 
 #deck {
 	width: 300px;
-	border-right: 1px solid black;
+	background-color: white;
+	overflow-y: auto;
+	margin: 5px 5px 0px 0px;
 }
 
 #info-display {
 	position: relative;
+}
+
+#calendar-table {
+	width: 100%;
+}
+
+#timesTD {
+	
 }
