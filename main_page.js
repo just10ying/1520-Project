@@ -24,17 +24,22 @@ function Course(name, professor, time, location, credits, classNumber, descripti
 // Returns a course table with the proper information
 // Card customization would occur here.
 function CourseTable(course) {
-	var parentDiv = $('<div class="course-card flex row std-margin unselectable" draggable="true" onclick="selectCard(this)" ondragstart="drag(event)" ondragover="cardDragOver(this)" ondragleave="cardDragLeave(this)"></div>');
-	var col1 = $('<div class="card-col-1"></div>');
-		col1.append($('<div class="row"></div>').attr("title", course.name).text(course.name));
-		col1.append($('<div class="row"></div>').attr("title", course.time).text(course.time));
-		col1.append($('<div class="row"></div>').attr("title", course.credits).text(course.credits));
-	var col2 = $('<div class="card-col-2"></div>');
-		col2.append($('<div class="row"></div>').attr("title", course.professor).text(course.professor));
-		col2.append($('<div class="row"></div>').attr("title", course.location).text(course.location));
-		col2.append($('<div class="row"></div>').attr("title", course.classNumber).text(course.classNumber));
+	var parentDiv = $('<div draggable="true" onclick="selectCard(this)" ondragstart="drag(event)" ondragover="cardDragOver(this)" ondragleave="cardDragLeave(this)"></div>');
+		parentDiv.addClass("course-card flex row static std-margin unselectable");
+	var col1 = $('<div class="card-col-1"></div>')
+		.append(newRowDiv(course.name))
+		.append(newRowDiv(course.time))
+		.append(newRowDiv(course.credits));
+	var col2 = $('<div class="card-col-2"></div>')
+		.append(newRowDiv(course.professor))
+		.append(newRowDiv(course.location))
+		.append(newRowDiv(course.classNumber));
 	parentDiv.append(col1).append(col2);
 	return parentDiv;
+}
+
+function newRowDiv(stringName) {
+	return $('<div class="row"></div').attr("title", stringName).text(stringName);
 }
 
 $(document).ready(function() {
@@ -54,6 +59,7 @@ function selectSingleCard(card) {
 
 /* -------------------------------------- Drag and Drop Functions for Course Cards -------------------------------------------------- */
 var draggedCard; // Global variable to store the currently dragged card.
+var cardDivider = $('<div id="card-insert-divider"></div>'); // This is a divider to show where the dragged card will be dropped.
 
 function allowDrop(ev) {
     ev.preventDefault();
@@ -65,8 +71,15 @@ function drag(ev) {
 
 function dropInSidebar(ev) {
     ev.preventDefault();
-	// If the user is dropping the card on a card, put the dropped card afterwards.
-    $(ev.target).closest(".course-card").after(draggedCard);
+	// If the item is being dropped on the sidebar, append dragged card.
+	if (ev.target.id == "card-parent") {
+		$("#card-parent").append(draggedCard);
+	}
+	else {
+		// If the user is dropping the card on a card, put the dropped card after that card.
+	    $(ev.target).closest(".course-card").after(draggedCard);
+	}
+	cardDivider.remove();
 }
 
 function dropInDeck(ev) {
@@ -78,12 +91,13 @@ function dropInDeck(ev) {
 	else {
 	    $(ev.target).closest(".course-card").after(draggedCard);	
 	}
+	cardDivider.remove();
 }
 
 function cardDragOver(card) {
-
+	$(card).after(cardDivider);
 }
 
 function cardDragLeave(card) {
-
+	cardDivider.remove();
 }

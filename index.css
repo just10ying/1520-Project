@@ -72,7 +72,7 @@ body {
 
 .h-edge-shadow {
 	border-right: 1px solid #AAAAAA;
-	box-shadow: 8px 0 10px -2px #CCCCCC;
+	box-shadow: 8px 0 15px 0px #CCCCCC;
 }
 
 /* --------------------------------------------- */
@@ -105,7 +105,7 @@ body {
 #sidebar {
 	width: 300px;
 	background-color: white;
-	margin-bottom: 0px;
+	margin: 0 5px;
 	padding: 5px 5px 0px 5px;
 }
 
@@ -131,6 +131,7 @@ body {
 	box-shadow: 2px 2px 2px 1px #888888;
 	font-size: 75%;
 	transition: .3s;
+	position: relative;
 }
 
 .course-card:hover {
@@ -166,11 +167,17 @@ body {
 	color: white;
 }
 
+#card-insert-divider {
+	border-bottom: 3px solid #AAAAAA;	
+	width: 90%;
+    margin: 3px auto;
+}
+
 #deck {
 	width: 300px;
 	background-color: white;
 	overflow-y: auto;
-	margin: 5px 5px 0px 0px;
+	margin: 0px 5px 0px 5px;
 }
 
 #info-display {
