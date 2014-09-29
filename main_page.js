@@ -1,50 +1,108 @@
+//--------------------------------------------------------------------- Initialization ---------------------------------------------------------------------------
+$(document).ready(function() {
+	populateCalendarRows(8, 20);
+});
+
 // Populate the course list array
 var courseList = new Array();
-courseList.push(new Course("Computer Architecture", "Michael Bigrigg", "MoWe/11:00AM-12:15PM", "5505 Sennott Square", "Credits: 3", "10829", "Description"));
-courseList.push(new Course("Intro to Operating Systems", "Jonathan Misurda", "MoWe/11:00AM-12:15PM", "0213 Cathedral", "Credits: 92", "38384", "Description"));
-courseList.push(new Course("Intro to MacroEconomics", "George Bush", "MoWe/11:00AM-12:15PM", "3084 Clapp", "Credits: 2", "38257", "Description"));
-courseList.push(new Course("Computer Organization", "Christine Lim", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
-courseList.push(new Course("Intro to Violin 1", "Justin Ying", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
-courseList.push(new Course("Psychology 0110", "Akane Tsumemori", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
-courseList.push(new Course("Engineering Analysis 1", "Joey Sadecky", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
-courseList.push(new Course("Data Structures", "Ethan Dale", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
-courseList.push(new Course("Web Development Stuff", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", "Description"));
+var deckList = new Array();
+var courseCatalog = new Array();
+courseCatalog.push(new Course("Computer Architecture", "Michael Bigrigg", "MoWe/11:00AM-12:15PM", "5505 Sennott Square", "Credits: 3", "10829", false, "Description"));
+courseCatalog.push(new Course("Intro to Operating Systems", "Jonathan Misurda", "MoWe/11:00AM-12:15PM", "0213 Cathedral", "Credits: 92", "38384", true, "Description"));
+courseCatalog.push(new Course("Intro to MacroEconomics", "George Bush", "MoWe/11:00AM-12:15PM", "3084 Clapp", "Credits: 2", "38257", false, "Description"));
+courseCatalog.push(new Course("Computer Organization", "Christine Lim", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
+courseCatalog.push(new Course("Intro to Violin 1", "Justin Ying", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
+courseCatalog.push(new Course("Psychology 0110", "Akane Tsumemori", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
+courseCatalog.push(new Course("Engineering Analysis 1", "Joey Sadecky", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
+courseCatalog.push(new Course("Data Structures", "Ethan Dale", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
+courseCatalog.push(new Course("Web Development Stuff", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
+courseCatalog.push(new Course("Physics 1", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37459", false, "Description"));
+courseCatalog.push(new Course("Physics 2", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 3", "37259", false, "Description"));
+courseCatalog.push(new Course("Calculus 1", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 3", "37229", false, "Description"));
+courseCatalog.push(new Course("Calculus 2", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 1", "37689", false, "Description"));
+courseCatalog.push(new Course("Calculus 3", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 33", "34289", false, "Description"));
+
 
 //--------------------------------------------------------------------- Search Functions ---------------------------------------------------------------------------
 function searchKeyPress(event) {
-	// Clear cards from card-parent only:
-	$("#card-parent").children(".course-card").remove();
+	// Clear cards from sidebar
+	clearSidebar();
 	// If the user presses escape, clear the input field.
 	if (event.keyCode == 27) {
 		$("#course-search-box").val('');
 		return;
 	}
+	// Get the search string that the user is typing
 	var searchString = $("#course-search-box").val().toLowerCase();
+	
 	if (searchString.length > 0) {
-		courseList.forEach(function(course) {
+		// Check each course for relevant strings
+		courseCatalog.forEach(function(course) {
 			for (field in course) {
-				var x = course[field].toLowerCase();
-				if (course[field].toLowerCase().indexOf(searchString) > -1) {
-					$("#card-parent").append(new CourseTable(course));
+				// If one of the fields has a substring that matches the search term, display the course.
+				// More complex logic should go here as the course object becomes more complex.
+				if ((typeof course[field] == "string") && (course[field].toLowerCase().indexOf(searchString) > -1)) {
+					addCourseToSidebar(course);
 					break;
+				}
+				// Timeslot logic here
+				else if (course[field].type == "timeslot") {
+					
 				}
 			}
 		});	
 	}
 }
+//--------------------------------------------------------------------- Deck Functions ---------------------------------------------------------------------------
 
+function addCourseToSidebar(course) {
+	$("#card-parent").append(new CourseTable(course));
+	courseList.push(course);
+}
+
+function addCourseToDeck(course) {
+	$("#deck").append(new CourseTable(course));
+	deckList.push(course);
+}
+
+function clearSidebar() {
+	$("#card-parent").children(".course-card").remove();
+	courseList.length = 0; // Clears the courselist array
+}
+
+function clearDeck() {
+	$("#deck").children(".course-card").remove();
+	deckList.length = 0; // Clears the courselist array
+}
+
+// Disables dragging and grays out the course in course-list with the same course number as "card"
+function disableDuplicateCard(course) {
+	
+}
 
 //--------------------------------------------------------------------- Card Functions ---------------------------------------------------------------------------
 
 // Creates a new course object
-function Course(name, professor, time, location, credits, classNumber, description) {
+function Course(name, professor, time, location, credits, classNumber, needsRecitation, description) {
 	this.name = name;
 	this.professor = professor;
-	this.time = time;
+	this.time = time; // this should be a TimeSlot object.
 	this.location = location;
 	this.credits = credits;
 	this.classNumber = classNumber;
+	this.needsRecitation = needsRecitation;
 	this.description = description;
+}
+
+// Stores the times a class will meet.
+// Days: an array of strings corresponding to whether or not a class is on a specific day.  Example: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"] would be a class on all days.
+// Start time: xx:yy, where xx is the hour and yy is the minute.  Example: 12:15 would be "12:15", as a string.
+// End time: xxyy, where xx is the hour and yy is the minute.
+function TimeSlot(days, start, end) {
+	this.type = "timeslot";
+	this.days = days;
+	this.start = start;
+	this.end = end;
 }
 
 // Returns a course table with the proper information
@@ -72,11 +130,6 @@ function selectCard(card) {
 	$(card).toggleClass("selected");
 }
 
-function selectSingleCard(card) {
-	$(".course-card").removeClass("selected");
-	$(card).toggleClass("selected");
-}
-
 /* -------------------------------------- Drag and Drop Functions for Course Cards -------------------------------------------------- */
 var draggedCard; // Global variable to store the currently dragged card.
 var cardDivider = $('<div id="card-insert-divider"></div>'); // This is a divider to show where the dragged card will be dropped.
@@ -86,9 +139,11 @@ function allowDrop(ev) {
 }
 
 function drag(ev) {
+	ev.dataTransfer.setData("text/plain", ""); // for firefox compatibility
     draggedCard = ev.target;
 }
 
+// Do we even want the user to be able to drop cards in the sidebar? FIX
 function dropInSidebar(ev) {
     ev.preventDefault();
 	// If the item is being dropped on the sidebar, append dragged card.
@@ -121,3 +176,31 @@ function cardDragOver(card) {
 function cardDragLeave(card) {
 	cardDivider.remove();
 }
+
+//--------------------------------------------------------------------- Calendar Functions ---------------------------------------------------------------------------
+
+// Populates the calendar with rows.  Start and end are integers from 0-23 corresponding to hours.
+function populateCalendarRows(start, end) {
+	for (var i = start; i < end; i++) {
+		var row = $('<div class="calendar-row"></div>');
+		$(".calendar-col").append(row);
+		var timeDiv = $('<div class="time-div flex row x-align y-align"></div>');
+		timeDiv.text(i.toString() + ":00");
+		$("#time-col").append(timeDiv);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

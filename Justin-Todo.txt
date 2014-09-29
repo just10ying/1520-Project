@@ -1,0 +1,15 @@
+Somehow class each field of the card table divs while still allowing for customization
+Gray out cards if there are duplicates
+Time object that's searchable?
+Make course object not just strings.
+
+-------
+This is Peoplesofter.  It's a tool that allows students to find the classes they're looking for.  They can search for classes and use the calendar on the right-hand side to see how the courses fit into their schedule in real time.
+
+Demo
+
+Where we're going:
+	Web scraping
+	Dynamic calendar
+	Smarter search
+	Polished UI

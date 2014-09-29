@@ -184,10 +184,39 @@ body {
 	position: relative;
 }
 
-#calendar-table {
+#calendar-wrapper {
 	width: 100%;
+	height: 100%;
+	justify-content: space-between;
 }
 
-#timesTD {
-	
+#calendar-wrapper .time-div {
+	flex: 1 1 1px;
+}
+
+#calendar-wrapper .calendar-col {
+	flex: 1 1 1px;
+	justify-content: space-between;
+}
+
+#calendar-wrapper .calendar-row {
+	flex: 1 1 1px;
+}
+
+#calendar-wrapper .calendar-row:not(:nth-last-child(1)) {
+	border-bottom: 1px solid #cccccc;
+}
+
+#calendar-wrapper .header {
+	border-bottom: 1px solid #cccccc;
+	padding: 0 0 3px 5px;
+}
+
+#calendar-wrapper #time-col {
+	border-right: 1px solid #cccccc;
+	width: 50px;
+}
+
+#calendar-wrapper .calendar-col:not(:nth-last-child(1)) {
+	border-right: 1px solid #cccccc;
 }
