@@ -5,7 +5,6 @@ api_version: 1
 threadsafe: no
 
 handlers:
-
 - url: /css
   static_dir: css
   
@@ -14,3 +13,5 @@ handlers:
 
 - url: /.*
   script: code.app
+  login: required
+  secure: always

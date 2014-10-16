@@ -1,6 +1,7 @@
 //--------------------------------------------------------------------- Initialization ---------------------------------------------------------------------------
 $(document).ready(function() {
 	populateCalendarRows(8, 20);
+	loadDeck();
 });
 
 // Populate the course list array
@@ -8,19 +9,19 @@ var courseList = new Array();
 var deckList = new Array();
 var courseCatalog = new Array();
 courseCatalog.push(new Course("Computer Architecture", "Michael Bigrigg", "MoWe/11:00AM-12:15PM", "5505 Sennott Square", "Credits: 3", "10829", false, "Description"));
-courseCatalog.push(new Course("Intro to Operating Systems", "Jonathan Misurda", "MoWe/11:00AM-12:15PM", "0213 Cathedral", "Credits: 92", "38384", true, "Description"));
-courseCatalog.push(new Course("Intro to MacroEconomics", "George Bush", "MoWe/11:00AM-12:15PM", "3084 Clapp", "Credits: 2", "38257", false, "Description"));
-courseCatalog.push(new Course("Computer Organization", "Christine Lim", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
-courseCatalog.push(new Course("Intro to Violin 1", "Justin Ying", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
-courseCatalog.push(new Course("Psychology 0110", "Akane Tsumemori", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
-courseCatalog.push(new Course("Engineering Analysis 1", "Joey Sadecky", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
-courseCatalog.push(new Course("Data Structures", "Ethan Dale", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
-courseCatalog.push(new Course("Web Development Stuff", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37289", false, "Description"));
-courseCatalog.push(new Course("Physics 1", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "37459", false, "Description"));
-courseCatalog.push(new Course("Physics 2", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 3", "37259", false, "Description"));
-courseCatalog.push(new Course("Calculus 1", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 3", "37229", false, "Description"));
-courseCatalog.push(new Course("Calculus 2", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 1", "37689", false, "Description"));
-courseCatalog.push(new Course("Calculus 3", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 33", "34289", false, "Description"));
+courseCatalog.push(new Course("Intro to Operating Systems", "Jonathan Misurda", "MoWe/11:00AM-12:15PM", "0213 Cathedral", "Credits: 92", "34215", true, "Description"));
+courseCatalog.push(new Course("Intro to MacroEconomics", "George Bush", "MoWe/11:00AM-12:15PM", "3084 Clapp", "Credits: 2", "53521", false, "Description"));
+courseCatalog.push(new Course("Computer Organization", "Christine Lim", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "55332", false, "Description"));
+courseCatalog.push(new Course("Intro to Violin 1", "Justin Ying", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "32353", false, "Description"));
+courseCatalog.push(new Course("Psychology 0110", "Akane Tsumemori", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "09876", false, "Description"));
+courseCatalog.push(new Course("Engineering Analysis 1", "Joey Sadecky", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "66767", false, "Description"));
+courseCatalog.push(new Course("Data Structures", "Ethan Dale", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "45453", false, "Description"));
+courseCatalog.push(new Course("Web Development Stuff", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "23456", false, "Description"));
+courseCatalog.push(new Course("Physics 1", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "89237", false, "Description"));
+courseCatalog.push(new Course("Physics 2", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 3", "77737", false, "Description"));
+courseCatalog.push(new Course("Calculus 1", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 3", "12349", false, "Description"));
+courseCatalog.push(new Course("Calculus 2", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 1", "12398", false, "Description"));
+courseCatalog.push(new Course("Calculus 3", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 33", "82828", false, "Description"));
 
 
 //--------------------------------------------------------------------- Search Functions ---------------------------------------------------------------------------
@@ -80,6 +81,42 @@ function disableDuplicateCard(course) {
 	
 }
 
+function saveDeck() {
+	var classNumberElements = $("#deck").find(".CourseNumber");
+	var classNumberString = "";
+	for (var index = 0; index < classNumberElements.length; index++) {
+		classNumberString += classNumberElements[index].innerText;
+		if (index != (classNumberElements.length - 1)) {
+			classNumberString += ",";
+		}
+	}
+	$.ajax({
+		type: "POST",
+		url: "/",
+		data: {classList: classNumberString},
+		success: function(data) {
+			alert(data);
+		}
+	});
+}
+
+function loadDeck() {
+	$.ajax({
+		type: "GET",
+		url: "/load_courses",
+		success: function(data) {
+			var classNumberArray = data.split(',');
+			for (var index = 0; index < classNumberArray.length; index++) {
+				for (var list_index = 0; list_index < courseCatalog.length; list_index++) {
+					if (classNumberArray[index] == courseCatalog[list_index].classNumber) {
+						addCourseToDeck(courseCatalog[list_index]);
+					}
+				}
+			}
+		}
+	});
+}
+
 //--------------------------------------------------------------------- Card Functions ---------------------------------------------------------------------------
 
 // Creates a new course object
@@ -117,7 +154,7 @@ function CourseTable(course) {
 	var col2 = $('<div class="card-col-2"></div>')
 		.append(newRowDiv(course.professor))
 		.append(newRowDiv(course.location))
-		.append(newRowDiv(course.classNumber));
+		.append(newRowDiv(course.classNumber).addClass("CourseNumber"));
 	parentDiv.append(col1).append(col2);
 	return parentDiv;
 }

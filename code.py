@@ -18,6 +18,9 @@ class Course(db.Model) :
   classroom = db.StringProperty		#location
   user = db.StringProperty	#how to identify user: id number, username, email address, full name?
 
+class CourseList(db.Model) :
+  list = db.StringProperty()
+  user = db.StringProperty()
 
 def render_template(handler, templatename, templatevalues) :
   path = os.path.join(os.path.dirname(__file__), 'templates/' + templatename)
@@ -43,12 +46,13 @@ class MainPage(webapp2.RequestHandler) :
     user = users.get_current_user()
     
     # if this object is defined now, we can assume a valid user is signed in.
-    # if user :
-
-
-      # ... then save it to the datastore with the db.Model put() method.
-    self.response.out.write("everything worked out ok.")
-      
+    if user :
+        course_list = CourseList(user.email(), user=user.email(), list=self.request.get("classList"))
+        course_list.put()
+        self.response.out.write("Hello, " + user.email() + "!  Your course list was saved!\n")
+		
+    else :
+        self.response.out.write("You are not logged in; your data will not be saved!")      
   
   def get(self) :
   
@@ -102,8 +106,16 @@ class ShowCourses(webapp2.RequestHandler) :
     }
     render_template(self, 'courses.html', template_values)
 
+class LoadCourses(webapp2.RequestHandler) :
+  def get(self) :
+    user = users.get_current_user()
+    if user :
+      # UserCourses = CourseList.all()
+      # UserCourses.filter('user =', user.email())
+      self.response.out.write(UserCourses.get_by_key_name(user.email()).list)
 
 app = webapp2.WSGIApplication([
   ('/', MainPage),
-  ('/courses', ShowCourses)
+  ('/courses', ShowCourses),
+  ('/load_courses', LoadCourses)
 ])

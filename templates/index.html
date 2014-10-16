@@ -1,6 +1,6 @@
 <html>
 <head>
-	<link href="/css/index.css" rel="stylesheet" type="text/css">
+	<link href='/css/index.css' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 </head>
 <body>
@@ -10,7 +10,7 @@
 		<div id="navbar" class="flex row">
 			<a href="url">ABOUT</a>
 			<a href="url">SETTINGS</a>
-			<a href="url">LOGIN</a>
+			<a href="{{logout}}">LOGOUT</a>
 		</div>
 		<div id="title" class="flex row x-align y-align unselectable">
 			PeopleSofter
@@ -26,6 +26,7 @@
 			</div>
 		</div>
 		<div id="deck" class="flex col std-padding h-edge-shadow" ondrop="dropInDeck(event)" ondragover="allowDrop(event)">
+			<button type="button" onclick="saveDeck()">Save List</button>
 			<!-- cards go here -->
 		</div>
 		<div id="info-display" class="flex col std-padding grow">
