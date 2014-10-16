@@ -47,7 +47,7 @@ class MainPage(webapp2.RequestHandler) :
     
     # if this object is defined now, we can assume a valid user is signed in.
     if user :
-        course_list = CourseList(user.email(), user=user.email(), list=self.request.get("classList"))
+        course_list = CourseList(None, user.email(), user=user.email(), list=self.request.get("classList"))
         course_list.put()
         self.response.out.write("Hello, " + user.email() + "!  Your course list was saved!\n")
 		
@@ -110,9 +110,9 @@ class LoadCourses(webapp2.RequestHandler) :
   def get(self) :
     user = users.get_current_user()
     if user :
-      # UserCourses = CourseList.all()
-      # UserCourses.filter('user =', user.email())
-      self.response.out.write(UserCourses.get_by_key_name(user.email()).list)
+      if CourseList.get_by_key_name(user.email()) is not None :
+	    self.response.out.write(CourseList.get_by_key_name(user.email()).list)
+      
 
 app = webapp2.WSGIApplication([
   ('/', MainPage),
