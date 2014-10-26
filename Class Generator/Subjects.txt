@@ -1,0 +1,62 @@
+Africana Studies, AFRCNA
+Anthropology, ANTH
+Architectural Studies, Subjects Vary
+Dietrich School of Arts and Sciences, ARTSC
+Astronomy, ASTRON
+Bioethics, BIOETH
+Biological Sciences, BIOSC
+Chemistry, CHEM
+Children's Lit Program, Subjects Vary
+Chinese, CHIN
+Classics, CLASS
+Communication, COMMRC
+Computer Science, CS
+Cultural Studies, Subjects Vary
+East Asian Studies, EAS
+Economics, ECON
+English Composition, ENGCMP
+English Film, ENGFLM
+English Literature, ENGLIT
+English Writing, ENGWRT
+Environmental Studies, Subjects Vary
+Film Studies, Subjects Vary
+Freshman Programs, FP
+French, FR
+Geology, GEOL
+German, GER
+Greek, GREEK
+History, HIST
+History and Philosophy of Science, HPS
+History of Art and Architecture, HAA
+Intelligent Systems, ISSP
+Italian, ITAL
+Japanese, JPNSE
+Jewish Studies, JS
+Korean, KOREAN
+Latin, LATIN
+Linguistics, LING
+Mathematics, MATH
+Medieval and Renaissance Studies, Subjects Vary
+Music, MUSIC
+Neuroscience, NROSCI
+Philosophy, PHIL
+Physical Education, PEDC
+Physics, PHYS
+Polish, POLISH
+Political Science, PS
+Portuguese, PORT
+Psychology, PSY
+Religion Cooperative Program, REL
+Religious Studies, RELGST
+Russion, RUSS
+SerbianCroatian, SERCRO
+Slavic, SLAV
+Slovak, SLOVAK
+Sociology, SOC
+Spanish, SPAN
+Statistics, STAT
+Studio Arts, SA
+Theatre Arts, THEA
+Ukrainian, UKRAIN
+Urban Studies, Subjects Vary
+Women's Studies, Subjects Vary
