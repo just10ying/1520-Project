@@ -4,20 +4,6 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import users
 from google.appengine.ext import db
 
-class Course(db.Model) :
-  dept = db.StringProperty()	#department
-  cat_num = db.IntegerProperty()	#catalog number
-  term = db.StringProperty()
-  class_num = db.IntegerProperty()
-  title = db.StringProperty()
-  instructor = db.StringProperty()
-  credits = db.IntegerProperty()
-  reqs = db.StringProperty	#general education requirements
-  days = db.StringProperty	#meeting days
-  time = db.StringProperty	#meeting times
-  classroom = db.StringProperty		#location
-  user = db.StringProperty	#how to identify user: id number, username, email address, full name?
-
 class CourseList(db.Model) :
   list = db.StringProperty()
   user = db.StringProperty()
@@ -27,35 +13,21 @@ def render_template(handler, templatename, templatevalues) :
   html = template.render(path, templatevalues)
   handler.response.out.write(html)
 
+# If / when we get web scraping working, we would have courses being populated here.
 def populate_Courses() :
-  #loop through array here?? Or pass in objects and have loop elsewhere calling this function
-  # we can populate this object...
-	  course = Course()
-	  #for now, must hardcode all course information and populate here
-	  #eventually will use web scraping to get this information, 
-	  #but does the database get populated every time, or can it
-	  #be done once and saved?
-	  course.put()
-populate_Courses()
+  pass
   
 class MainPage(webapp2.RequestHandler) :
   def post(self) :
-
-    
-    # retrieving the current user is simple.
     user = users.get_current_user()
-    
-    # if this object is defined now, we can assume a valid user is signed in.
     if user :
-        course_list = CourseList(None, user.email(), user=user.email(), list=self.request.get("classList"))
-        course_list.put()
-        self.response.out.write("Hello, " + user.email() + "!  Your course list was saved!\n")
-		
+        # 
+        CourseList(None, user.nickname(), user=user.email(), list=self.request.get("classList")).put()
+        self.response.out.write("Hello, " + user.nickname() + "!  Your course list was saved!\n")	
     else :
-        self.response.out.write("You are not logged in; your data will not be saved!")      
+        self.response.out.write("You are not logged in.  Your data will not be saved!")      
   
   def get(self) :
-  
     user = users.get_current_user()
   
     login_url = ''
@@ -65,57 +37,27 @@ class MainPage(webapp2.RequestHandler) :
     name = ''
     
     if user :
-      # it's easy to get basic details from our user, as well as a URL to sign out.
-      # the parameter to the create_logout_url method just identifies where to redirect after logout.
       logout_url = users.create_logout_url('/')
-      email = user.email()
-      name = user.nickname()
     else :
       login_url = users.create_login_url('/')
     
     template_values = {
       'login' : login_url,
       'logout' : logout_url,
-      'email' : email,
-      'nickname' : name,
     }
   
     render_template(self, 'index.html', template_values)
-
-
-# we'll use this to retrieve the values from the datastore.
-class ShowCourses(webapp2.RequestHandler) :
-  def get(self) :
-  
-    course_info = []
-    
-    # we'll get the current user... 
-    user = users.get_current_user()
-    if user :
-    
-      # ... then build a query based on that users's entries.
-      q = Course.all()
-      #q.filter('user =', user.email()) --- figure this out
-      
-      # we'll run the query and save all the results.	-- this should create the cards??
-      for course in q.run() :
-        course_info.append(course)
-      
-    template_values = {
-      'courses' : courses
-    }
-    render_template(self, 'courses.html', template_values)
 
 class LoadCourses(webapp2.RequestHandler) :
   def get(self) :
     user = users.get_current_user()
     if user :
-      if CourseList.get_by_key_name(user.email()) is not None :
-	    self.response.out.write(CourseList.get_by_key_name(user.email()).list)
+      user_list = CourseList.get_by_key_name(user.nickname())
+      if user_list is not None :
+        self.response.out.write(user_list.list)
       
 
 app = webapp2.WSGIApplication([
   ('/', MainPage),
-  ('/courses', ShowCourses),
   ('/load_courses', LoadCourses)
 ])

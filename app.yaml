@@ -14,4 +14,3 @@ handlers:
 
 - url: /.*
   script: code.app
-  login: required

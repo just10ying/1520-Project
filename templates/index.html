@@ -10,7 +10,11 @@
 		<div id="navbar" class="flex row">
 			<a href="url">ABOUT</a>
 			<a href="url">SETTINGS</a>
-			<a href="{{logout}}">LOGOUT</a>
+			{% if login %}
+				<a href="{{login}}">LOGIN</a>
+			{% else %}
+				<a href="{{logout}}">LOGOUT</a>
+			{% endif %}
 		</div>
 		<div id="title" class="flex row x-align y-align unselectable">
 			PeopleSofter
