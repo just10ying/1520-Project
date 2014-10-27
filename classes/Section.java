@@ -42,7 +42,7 @@ public class Section {
 		jsonString.deleteCharAt(jsonString.length()-1);
 		jsonString.deleteCharAt(jsonString.length()-1);
 		
-		jsonString.append("}\n\n");
+		jsonString.append("}");
 		return jsonString.toString();
 	}
 	

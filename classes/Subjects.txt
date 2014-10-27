@@ -48,7 +48,7 @@ Portuguese, PORT
 Psychology, PSY
 Religion Cooperative Program, REL
 Religious Studies, RELGST
-Russion, RUSS
+Russian, RUSS
 SerbianCroatian, SERCRO
 Slavic, SLAV
 Slovak, SLOVAK

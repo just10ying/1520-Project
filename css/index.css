@@ -67,7 +67,8 @@ body {
 }
  
 ::-webkit-scrollbar-thumb {
-	background: #0288d1;
+	/* background: #0288d1; */
+	background: #AAAAAA;
 }
 
 .h-edge-shadow {

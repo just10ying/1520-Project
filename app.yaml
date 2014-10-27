@@ -11,6 +11,10 @@ handlers:
   
 - url: /js
   static_dir: js
+  
+- url: /classes
+  static_dir: classes
+  mime_type: "application/json"
 
 - url: /.*
   script: code.app

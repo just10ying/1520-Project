@@ -50,21 +50,29 @@ public class ClassGenerator {
 		categoryAbbreviations = new ArrayList<String>();
 		loadCategories(categoryList, categoryAbbreviations);
 		
-		StringBuilder jsonString = new StringBuilder("\"classes:\":[\n");
+		StringBuilder jsonString = new StringBuilder("{\"classes\":[\n");
 		
 		int minNum = 10000;
-		int maxClasses = 20000;
+		int maxClasses = minNum + Integer.parseInt(args[0]);
 		
 		for (int classNum = minNum; classNum < maxClasses; classNum++) {
-			jsonString.append(createRandomSection(classNum, String.valueOf(randomGenerator.nextInt(maxClasses+1))).toJSONString());
+			jsonString.append(createRandomSection(classNum, String.valueOf(minNum + randomGenerator.nextInt(Integer.parseInt(args[0])+1))).toJSONString());
+			if (classNum == (maxClasses - 1)) {
+				jsonString.append("\n");
+			}
+			else {
+				jsonString.append(",\n\n");
+			}
 		}
-		
+
 		jsonString.append("]}");
 		try {
-			PrintWriter jsonOut = new PrintWriter("output.txt");
+			PrintWriter jsonOut = new PrintWriter("classes_list.json");
 			jsonOut.print(jsonString.toString());
+			jsonOut.flush();
 		}
 		catch (FileNotFoundException e) {
+			System.out.println("File not found exception.");
 			// This should not occur.
 		}
 	}
