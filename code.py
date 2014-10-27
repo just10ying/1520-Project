@@ -23,9 +23,9 @@ class MainPage(webapp2.RequestHandler) :
     if user :
         # 
         CourseList(None, user.nickname(), user=user.email(), list=self.request.get("classList")).put()
-        self.response.out.write("Hello, " + user.nickname() + "!  Your course list was saved!\n")	
+        self.response.out.write(1)	
     else :
-        self.response.out.write("You are not logged in.  Your data will not be saved!")      
+        self.response.out.write(0)      
   
   def get(self) :
     user = users.get_current_user()

@@ -8,20 +8,6 @@ $(document).ready(function() {
 var courseList = new Array();
 var deckList = new Array();
 var courseCatalog = new Array();
-// courseCatalog.push(new Course("Computer Architecture", "Michael Bigrigg", "MoWe/11:00AM-12:15PM", "5505 Sennott Square", "Credits: 3", "10829", false, "Description"));
-// courseCatalog.push(new Course("Intro to Operating Systems", "Jonathan Misurda", "MoWe/11:00AM-12:15PM", "0213 Cathedral", "Credits: 92", "34215", true, "Description"));
-// courseCatalog.push(new Course("Intro to MacroEconomics", "George Bush", "MoWe/11:00AM-12:15PM", "3084 Clapp", "Credits: 2", "53521", false, "Description"));
-// courseCatalog.push(new Course("Computer Organization", "Christine Lim", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "55332", false, "Description"));
-// courseCatalog.push(new Course("Intro to Violin 1", "Justin Ying", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "32353", false, "Description"));
-// courseCatalog.push(new Course("Psychology 0110", "Akane Tsumemori", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "09876", false, "Description"));
-// courseCatalog.push(new Course("Engineering Analysis 1", "Joey Sadecky", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "66767", false, "Description"));
-// courseCatalog.push(new Course("Data Structures", "Ethan Dale", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "45453", false, "Description"));
-// courseCatalog.push(new Course("Web Development Stuff", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "23456", false, "Description"));
-// courseCatalog.push(new Course("Physics 1", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 9", "89237", false, "Description"));
-// courseCatalog.push(new Course("Physics 2", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 3", "77737", false, "Description"));
-// courseCatalog.push(new Course("Calculus 1", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 3", "12349", false, "Description"));
-// courseCatalog.push(new Course("Calculus 2", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 1", "12398", false, "Description"));
-// courseCatalog.push(new Course("Calculus 3", "Timothy James", "MoWe/11:00AM-12:15PM", "102 David Lawrence", "Credits: 33", "82828", false, "Description"));
 
 //--------------------------------------------------------------------- Search Functions ---------------------------------------------------------------------------
 function searchKeyPress(event) {
@@ -35,7 +21,7 @@ function searchKeyPress(event) {
 	// Get the search string that the user is typing
 	var searchString = $("#course-search-box").val().toLowerCase();
 	
-	if (searchString.length > 0) {
+	if (searchString.length > 1) {
 		// Check each course for relevant strings
 		courseCatalog.forEach(function(course) {
 			for (field in course) {
@@ -105,7 +91,13 @@ function saveDeck() {
 		url: "/",
 		data: {classList: classNumberString},
 		success: function(data) {
-			alert(data);
+			// Handle save dialog box here.
+			if (data ==  1) {
+				alert("Saved!");
+			}
+			else {
+				alert("Not saved!");
+			}
 		}
 	});
 }
@@ -129,29 +121,6 @@ function loadDeck() {
 
 //--------------------------------------------------------------------- Card Functions ---------------------------------------------------------------------------
 
-// Creates a new course object
-function Course(name, professor, time, location, credits, classNumber, needsRecitation, description) {
-	this.name = name;
-	this.professor = professor;
-	this.time = time; // this should be a TimeSlot object.
-	this.location = location;
-	this.credits = credits;
-	this.classNumber = classNumber;
-	this.needsRecitation = needsRecitation;
-	this.description = description;
-}
-
-// Stores the times a class will meet.
-// Days: an array of strings corresponding to whether or not a class is on a specific day.  Example: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"] would be a class on all days.
-// Start time: xx:yy, where xx is the hour and yy is the minute.  Example: 12:15 would be "12:15", as a string.
-// End time: xxyy, where xx is the hour and yy is the minute.
-function TimeSlot(days, start, end) {
-	this.type = "timeslot";
-	this.days = days;
-	this.start = start;
-	this.end = end;
-}
-
 // Returns a course table with the proper information
 // Card customization would occur here.
 function CourseTable(course) {
@@ -159,11 +128,11 @@ function CourseTable(course) {
 		parentDiv.addClass("course-card flex row static std-margin unselectable");
 	var col1 = $('<div class="card-col-1"></div>')
 		.append(newRowDiv(course.Title))
-		.append(newRowDiv(course.Subject))
+		.append(newRowDiv(course.Location))
 		.append(newRowDiv("Credits: " + course.NumCredits));
 	var col2 = $('<div class="card-col-2"></div>')
 		.append(newRowDiv(course.Instructors))
-		.append(newRowDiv(course.Days))
+		.append(newRowDiv(course.Subject))
 		.append(newRowDiv(course.CatalogNumber).addClass("CourseNumber"));
 	parentDiv.append(col1).append(col2);
 	return parentDiv;
@@ -240,6 +209,11 @@ function populateCalendarRows(start, end) {
 $.getJSON( "classes/classes_list.json", function(data) {
 	courseCatalog = data.classes;
 }).fail(function(){alert("JSON load failure!");});
+
+
+
+
+
 
 
 

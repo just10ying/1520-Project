@@ -8,6 +8,7 @@ public class ClassGenerator {
 	private static String[] prefixes = {"Intro to","Intermediate","Advanced","Beginners","Mathematical","Magical","Applied","Theoretical","Expensive","Annoying","Impossible","Easy","Blue","Red","Green","Upper-Level","Lower-Level","Basic","Difficult","Super Advanced","Poorly Taught","Superb","Cognitive","Civil","Computer","Bio","Chemical","Senior","Amazing","Kawaii","Sugoi","Infinite","Crazy","Calm","Charming","Arrogant","Grungy","Hairy","Handy","Global","Fuzzy","Electric","Signal","Defense Against","Philosophy of","Pokemon"};
 	private static String[] courses = {"Calculus","Whole Numbers","Thermodynamics","Engineering Analysis","Freshmen Seminar","Sophomore Seminar","CoE Seminar","Web Applications","Web Development","Software Development","Software Engineering","Mobile Platform Development","App Development","Economics","Differential Equations","Psychology","Engineering","Design","Game Theory","Data Structures","Algorithms","Variables","Addition","Algebra","Kung Fu","Gaming","Swimming","Basketball","Videogames","Construction","Basket Weaving","Lab","Firefighting","Desktop Applications","Network Security","Circuits","Analysis","Jedi Training","Halo","Arts","Latin","Spanish","Chinese","Parseltongue","Simpsons","Tree climbing","Magical Girl Seminar","Knitting","Justice","Training"};
 	private static String[] suffixes = {"For Engineers", "For Beginners", "For Peasants", "I", "II", "III", "for Noobs", "for Pros", "for Scientists","Basics"};
+	private static String[] buildings = {"Allen Hall", "Alumni Hall", "Amos Hall", "Barco Law Building", "Bellefield Hall", "Bellefield Towers", "Benedum Hall", "Biomedical Science Tower", "Cathedral of Learning", "Chevron Science Center", "Clapp Hall", "Craig Hall", "Crabtree Hall", "Crawford Hall", "David Lawrence Hall", "Eberly Hall", "Falk School", "Frick Fine Arts", "Hillman Library", "Langley Hall", "Music Building", "Posvar Hall", "Scaife Hall", "Sennott Square", "Thaw Hall", "Trees Hall", "Victoria Building"};
 	
 	private static List<String> instructorList;
 	private static List<String> sessionList;
@@ -88,6 +89,7 @@ public class ClassGenerator {
 		randomSection.numCredits = randomGenerator.nextInt(5) + 1;
 		randomSection.classNum = String.valueOf(String.format("%05d", catalogNum));
 		randomSection.session = getRandomMember(sessionList);
+		randomSection.location = generateLocation();
 		randomSection.days = getRandomBooleans(7);
 		randomSection.startHour = randomGenerator.nextInt(10)+8;
 		randomSection.startMinute = randomGenerator.nextInt(4)*15;
@@ -102,6 +104,10 @@ public class ClassGenerator {
 		randomSection.instructors = getRandomMember(instructorList);
 		
 		return randomSection;
+	}
+	
+	public static String generateLocation() {
+		return getRandomMember(Arrays.asList(buildings)) + String.format(" %04d", randomGenerator.nextInt(1000));
 	}
 	
 	public static boolean[] getRandomBooleans(int num) {

@@ -7,6 +7,7 @@ public class Section {
 	public int numCredits;
 	public String classNum; // This should be unique.
 	public String session;
+	public String location;
 	
 	public boolean[] days; // Monday through Sunday, in that order.  Boolean if class is on that day.
 	public int startHour;
@@ -30,6 +31,7 @@ public class Section {
 		jsonString.append(propertyNameToJson("NumCredits", numCredits));
 		jsonString.append(propertyNameToJson("ClassNum", classNum));
 		jsonString.append(propertyNameToJson("Session", session));
+		jsonString.append(propertyNameToJson("Location", location));
 		jsonString.append(propertyNameToJson("Days", daysToString()));
 		jsonString.append(propertyNameToJson("StartHour", startHour));
 		jsonString.append(propertyNameToJson("StartMinute", startMinute));
