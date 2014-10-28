@@ -221,3 +221,12 @@ body {
 #calendar-wrapper .calendar-col:not(:nth-last-child(1)) {
 	border-right: 1px solid #cccccc;
 }
+
+/* --------------------Course Info View CSS------------------------- */
+#info-display {
+	position: relative;
+}
+
+#course-name {
+	font-size: 150%;
+}

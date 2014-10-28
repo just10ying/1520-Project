@@ -90,6 +90,7 @@ public class ClassGenerator {
 		randomSection.classNum = String.valueOf(String.format("%05d", catalogNum));
 		randomSection.session = getRandomMember(sessionList);
 		randomSection.location = generateLocation();
+		randomSection.description = "Placeholder description.";
 		randomSection.days = getRandomBooleans(7);
 		randomSection.startHour = randomGenerator.nextInt(10)+8;
 		randomSection.startMinute = randomGenerator.nextInt(4)*15;

@@ -2,6 +2,16 @@
 $(document).ready(function() {
 	populateCalendarRows(8, 20);
 	loadDeck();
+	hidePages();
+	showCalendarInformation();
+});
+
+// Hotkeys here
+$(document).keydown(function(event) {
+	if (event.keyCode == 191) {
+		event.preventDefault();
+		$("#course-search-box").focus();
+	}
 });
 
 // Populate the course list array
@@ -36,14 +46,32 @@ function searchKeyPress(event) {
 					
 				}
 			}
-		});	
+		});
+		// Remove duplicate courses from sidebar
+		$("#deck").children().each(function(index, courseDomObj){
+			removeCourseFromSidebar($(courseDomObj).attr("catalognumber"));
+		});
 	}
+}
+
+function getCourseWithNumber(number) {
+	var returnCourse = null;
+	courseCatalog.forEach(function(course) {
+		if (course.CatalogNumber == number) {
+			returnCourse = course;
+		}
+	});
+	return returnCourse;
 }
 //--------------------------------------------------------------------- Deck Functions ---------------------------------------------------------------------------
 
 function addCourseToSidebar(course) {
 	$("#card-parent").append(new CourseTable(course));
 	courseList.push(course);
+}
+
+function removeCourseFromSidebar(courseNumber) {
+	$("#card-parent").children("[catalognumber='" + courseNumber + "']").remove();
 }
 
 function addCourseToDeck(course) {
@@ -110,7 +138,7 @@ function loadDeck() {
 			var classNumberArray = data.split(',');
 			for (var index = 0; index < classNumberArray.length; index++) {
 				for (var list_index = 0; list_index < courseCatalog.length; list_index++) {
-					if (classNumberArray[index] == courseCatalog[list_index].classNumber) {
+					if (classNumberArray[index] == courseCatalog[list_index].CatalogNumber) {
 						addCourseToDeck(courseCatalog[list_index]);
 					}
 				}
@@ -125,6 +153,7 @@ function loadDeck() {
 // Card customization would occur here.
 function CourseTable(course) {
 	var parentDiv = $('<div draggable="true" onclick="selectCard(this)" ondragstart="drag(event)" ondragover="cardDragOver(this)" ondragleave="cardDragLeave(this)"></div>');
+		parentDiv.attr("catalognumber", course.CatalogNumber);
 		parentDiv.addClass("course-card flex row static std-margin unselectable");
 	var col1 = $('<div class="card-col-1"></div>')
 		.append(newRowDiv(course.Title))
@@ -135,6 +164,10 @@ function CourseTable(course) {
 		.append(newRowDiv(course.Subject))
 		.append(newRowDiv(course.CatalogNumber).addClass("CourseNumber"));
 	parentDiv.append(col1).append(col2);
+	parentDiv.get(0).addEventListener('contextmenu', function(e){
+		showCourseInformation(e.currentTarget.getAttribute("catalognumber"));
+		e.preventDefault();
+	});
 	return parentDiv;
 }
 
@@ -210,7 +243,30 @@ $.getJSON( "classes/classes_list.json", function(data) {
 	courseCatalog = data.classes;
 }).fail(function(){alert("JSON load failure!");});
 
+/* -------------------------------------- Functions for Showing Alternate Pages -------------------------------------------------- */
+function hidePages() {
+	$("#info-display").children().hide();
+}
 
+function showCourseInformation(courseNumber) {
+	hidePages();
+	var course = getCourseWithNumber(courseNumber);
+	$("#course-name").text("Title: " + course.Title);
+	$("#course-teacher").text("Instructors: " + course.Instructors);
+	$("#course-location").text("Location: " + course.Location);
+	$("#course-credits").text("Credits: " + course.NumCredits);
+	$("#course-class-number").text("Catalog Number: " + course.CatalogNumber);
+	$("#course-term").text("Term: " + course.Term);
+	$("#course-type").text("Type: " + course.Type);	
+	$("#course-description").text("Description: " + course.Description);
+
+	$("#course-info-view").show();
+}
+
+function showCalendarInformation() {
+	hidePages();
+	$("#calendar-wrapper").show();
+}
 
 
 
