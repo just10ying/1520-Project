@@ -48,18 +48,19 @@
 						<td id="course-term"></td>
 						<td id="course-type"></td>
 					</tr>
+					<tr>
+						<td id="course-days"></td>
+						<td id="course-start-time"></td>
+						<td id="course-end-time"></td>
+					</tr>
 				</table>
 				<div id="course-description" class="flex row"></div>
+			  <input type="submit" value="Close" onclick="showCalendarInformation()">
 			</div>
 			<div id="calendar-wrapper" class="flex row">
 				<div id="time-col" class="flex col">
 					<div class="header">
 						Time
-					</div>
-				</div>
-				<div id="sunday-col" class="flex col calendar-col">
-					<div class="header">
-						Sunday
 					</div>
 				</div>
 				<div id="monday-col" class="flex col calendar-col">
@@ -90,6 +91,11 @@
 				<div id="saturday-col" class="flex col calendar-col">
 					<div class="header">
 						Saturday
+					</div>
+				</div>
+				<div id="sunday-col" class="flex col calendar-col">
+					<div class="header">
+						Sunday
 					</div>
 				</div>
 			</div>

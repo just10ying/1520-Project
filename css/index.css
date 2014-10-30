@@ -222,6 +222,10 @@ body {
 	border-right: 1px solid #cccccc;
 }
 
+#calendar-wrapper .occupied {
+	background-color: #0288d1;
+}
+
 /* --------------------Course Info View CSS------------------------- */
 #info-display {
 	position: relative;

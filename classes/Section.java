@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Section {
 	public String term;
 	public String type;
@@ -34,7 +36,7 @@ public class Section {
 		jsonString.append(propertyNameToJson("Session", session));
 		jsonString.append(propertyNameToJson("Location", location));
 		jsonString.append(propertyNameToJson("Description", description));
-		jsonString.append(propertyNameToJson("Days", daysToString()));
+		jsonString.append(boolArrayToJson("Days", daysToString()));
 		jsonString.append(propertyNameToJson("StartHour", startHour));
 		jsonString.append(propertyNameToJson("StartMinute", startMinute));
 		jsonString.append(propertyNameToJson("EndHour", endHour));
@@ -61,7 +63,12 @@ public class Section {
 		if (returnString.length() > 0) {
 			returnString = new StringBuilder(returnString).deleteCharAt(returnString.length()-1).toString(); // Delete the last comma
 		}
+		returnString = Arrays.toString(days);
 		return returnString;
+	}
+	
+	public static String boolArrayToJson(String name, String value) {
+		return "\t\"" + name + "\": " + value + ",\n";	
 	}
 	
 	public static String propertyNameToJson(String name, String value) {

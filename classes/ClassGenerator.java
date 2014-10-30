@@ -10,6 +10,9 @@ public class ClassGenerator {
 	private static String[] suffixes = {"For Engineers", "For Beginners", "For Peasants", "I", "II", "III", "for Noobs", "for Pros", "for Scientists","Basics"};
 	private static String[] buildings = {"Allen Hall", "Alumni Hall", "Amos Hall", "Barco Law Building", "Bellefield Hall", "Bellefield Towers", "Benedum Hall", "Biomedical Science Tower", "Cathedral of Learning", "Chevron Science Center", "Clapp Hall", "Craig Hall", "Crabtree Hall", "Crawford Hall", "David Lawrence Hall", "Eberly Hall", "Falk School", "Frick Fine Arts", "Hillman Library", "Langley Hall", "Music Building", "Posvar Hall", "Scaife Hall", "Sennott Square", "Thaw Hall", "Trees Hall", "Victoria Building"};
 	
+	private static ArrayList<boolean[]> daysArray = new ArrayList<boolean[]>();
+
+	
 	private static List<String> instructorList;
 	private static List<String> sessionList;
 	private static List<String> termsList;
@@ -37,9 +40,25 @@ public class ClassGenerator {
 		return list.get(randomGenerator.nextInt(list.size()));
 	}
 	
+	public static void init() {
+		boolean[] days1 = {true,	true,	true,	true,	true,	false,	false};
+		boolean[] days2 = {false,	true,	false,	true,	false,	false,	false};
+		boolean[] days3 = {true,	false,	true,	false,	true,	false,	false};
+		boolean[] days4 = {true,	true,	true,	false, 	false,	false,	false};
+		boolean[] days5 = {true,	false,	true,	false,	false,	false,	false};
+		boolean[] days6 = {false,	false,	false,	false,	false,	true,	true};
+		daysArray.add(days1);
+		daysArray.add(days2);
+		daysArray.add(days3);
+		daysArray.add(days4);
+		daysArray.add(days5);
+		daysArray.add(days6);
+	}
+	
 	public static void main(String[] args) {
 		// Initialize random:
 		randomGenerator = new Random();
+		init();
 
 		// Read instructor names
 		instructorList = getInstructors("InstructorNames.txt");
@@ -91,7 +110,7 @@ public class ClassGenerator {
 		randomSection.session = getRandomMember(sessionList);
 		randomSection.location = generateLocation();
 		randomSection.description = "Placeholder description.";
-		randomSection.days = getRandomBooleans(7);
+		randomSection.days = getDays();
 		randomSection.startHour = randomGenerator.nextInt(10)+8;
 		randomSection.startMinute = randomGenerator.nextInt(4)*15;
 		randomSection.endHour = randomSection.startHour + randomGenerator.nextInt(3)+1;
@@ -112,7 +131,7 @@ public class ClassGenerator {
 	}
 	
 	public static boolean[] getRandomBooleans(int num) {
-		boolean[] returnValue = new boolean[7];
+		boolean[] returnValue = new boolean[num];
 		for (int index = 0; index < num; index++) {
 			if (randomGenerator.nextInt(2) == 1) {
 				returnValue[index] = true;
@@ -122,6 +141,10 @@ public class ClassGenerator {
 			}
 		}
 		return returnValue;
+	}
+	
+	public static boolean[] getDays() {
+		return daysArray.get(randomGenerator.nextInt(6));
 	}
 	
 	// Prints the contents of a list of strings.

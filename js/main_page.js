@@ -14,6 +14,10 @@ $(document).keydown(function(event) {
 	}
 });
 
+$.getJSON( "classes/classes_list.json", function(data) {
+	courseCatalog = data.classes;
+}).fail(function(){alert("JSON load failure!");});
+
 // Populate the course list array
 var courseList = new Array();
 var deckList = new Array();
@@ -75,7 +79,7 @@ function removeCourseFromSidebar(courseNumber) {
 }
 
 function addCourseToDeck(course) {
-	$("#deck").append(new CourseTable(course));
+	$("#deck").append(new CourseTable(course)); // This does not occur anymore because we're moving the DOM object directly in the drop handler.
 	deckList.push(course);
 }
 
@@ -87,11 +91,35 @@ function clearSidebar() {
 function clearDeck() {
 	$("#deck").children(".course-card").remove();
 	deckList.length = 0; // Clears the courselist array
+	refreshCalendar();
 }
 
 // Disables dragging and grays out the course in course-list with the same course number as "card"
 function disableDuplicateCard(course) {
 	
+}
+
+function showDeckCoursesInCalendar() {
+	updateDeckList();
+	deckList.forEach(function(course) {
+		putCourseOnCalendar(course);
+	});
+}
+
+function updateDeckList() {
+	deckList.length = 0; // Clears the deck array
+	$("#deck").find(".course-card").each(function(index, obj) {
+		deckList.push(getCourseWithNumber(obj.getAttribute("catalognumber")));
+	});
+}
+
+function clearCalendar() {
+	$("#calendar-wrapper").find(".occupied").removeClass("occupied");
+}
+
+function refreshCalendar() {
+	clearCalendar();
+	showDeckCoursesInCalendar();
 }
 
 // Binds deck saving to ctrl-s
@@ -124,7 +152,7 @@ function saveDeck() {
 				alert("Saved!");
 			}
 			else {
-				alert("Not saved!");
+				window.location.replace(data);
 			}
 		}
 	});
@@ -143,6 +171,7 @@ function loadDeck() {
 					}
 				}
 			}
+			refreshCalendar();
 		}
 	});
 }
@@ -204,6 +233,7 @@ function dropInSidebar(ev) {
 	    $(ev.target).closest(".course-card").after(draggedCard);
 	}
 	cardDivider.remove();
+	refreshCalendar();
 }
 
 function dropInDeck(ev) {
@@ -215,7 +245,9 @@ function dropInDeck(ev) {
 	else {
 	    $(ev.target).closest(".course-card").after(draggedCard);	
 	}
+	deckList.push(getCourseWithNumber(draggedCard.getAttribute("catalognumber")));
 	cardDivider.remove();
+	refreshCalendar();
 }
 
 function cardDragOver(card) {
@@ -230,18 +262,91 @@ function cardDragLeave(card) {
 
 // Populates the calendar with rows.  Start and end are integers from 0-23 corresponding to hours.
 function populateCalendarRows(start, end) {
+	start--;
 	for (var i = start; i < end; i++) {
-		var row = $('<div class="calendar-row"></div>');
+		var row = $('<div class="calendar-row flex col"></div>');
+		row.addClass("hour" + (i + 1));
 		$(".calendar-col").append(row);
 		var timeDiv = $('<div class="time-div flex row x-align y-align"></div>');
-		timeDiv.text(i.toString() + ":00");
+		timeDiv.text(((i%12)+1).toString() + ":00");
 		$("#time-col").append(timeDiv);
+	}
+	
+	calCreateRowSubdivisions();
+}
+
+function calCreateRowSubdivisions() {
+	for (var index = 0; index < numDivs; index++) {
+		var newDiv = $("<div></div>");
+		newDiv.addClass("flex row grow");
+		newDiv.addClass("calDiv" + index);
+		$(".calendar-row").append(newDiv)
 	}
 }
 
-$.getJSON( "classes/classes_list.json", function(data) {
-	courseCatalog = data.classes;
-}).fail(function(){alert("JSON load failure!");});
+// FIX THIS; IT DOESN'T WORK QUITE RIGHT FOR TIME RANGES
+function putCourseOnCalendar(course) {
+	var dayCols = $("#calendar-wrapper").children(".calendar-col");
+	for (var index = 0; index < dayCols.length; index++) {
+		// If there is class on that day:
+		if (course.Days[index]) {
+			var currentHour = parseInt(course.StartHour);
+			var currentMinute = parseInt(course.StartMinute);
+			while (!isFirstTimeLater(currentHour, currentMinute, parseInt(course.EndHour), parseInt(course.EndMinute))) {
+				if ((currentMinute == 60) && (!areTimesEqual(currentHour + 1, 0, parseInt(course.EndHour), parseInt(course.EndMinute)))){
+					highlightSlot(index, currentHour + 1, 0);
+				}
+				else {
+					highlightSlot(index, currentHour, currentMinute);
+				}
+				currentMinute += slotLength;
+				if (currentMinute > 60) {
+					currentHour++;
+					currentMinute -= 60;
+				}
+			}
+		}
+	}
+}
+
+function areTimesEqual(hourA, minuteA, hourB, minuteB) {
+	if ((hourA == hourB) && (minuteA == minuteB)) {
+		return true;
+	}
+}
+
+function isTimeWithinRange(botHour, botMinute, topHour, topMinute, hour, minute) {
+	
+}
+
+function isFirstTimeLater(hourA, minuteA, hourB, minuteB) {
+	if (hourA > hourB) {
+		return true;
+	}
+	if (hourA < hourB) {
+		return false;
+	}
+	else {
+		return minuteA > minuteB;
+	}
+}
+
+// Day is 0-6, Mon-Sun
+// Highlights the slot with the specified time
+// This should never receive minute 60.
+function highlightSlot(day, hourNum, minute) {
+	// Finds the element with the specified hour.
+	var dayCols = $("#calendar-wrapper").children(".calendar-col");
+	var hour = $(dayCols[day]).find(".hour" + hourNum);
+	var slotNum = Math.floor(minute/slotLength);
+	hour.find(".calDiv" + slotNum).addClass("occupied");
+}
+
+// Calendar Constants:
+// Number of divisions per hour:
+var numDivs = 4;
+var slotLength = 60/numDivs;
+
 
 /* -------------------------------------- Functions for Showing Alternate Pages -------------------------------------------------- */
 function hidePages() {
@@ -259,8 +364,46 @@ function showCourseInformation(courseNumber) {
 	$("#course-term").text("Term: " + course.Term);
 	$("#course-type").text("Type: " + course.Type);	
 	$("#course-description").text("Description: " + course.Description);
-
+	$("#course-days").text("Days: " + generateDayString(course.Days));
+	$("#course-start-time").text("Start time: " + timeToString(course.StartHour, course.StartMinute));
+	$("#course-end-time").text("End time: " + timeToString(course.EndHour, course.EndMinute));
+	
 	$("#course-info-view").show();
+}
+
+function timeToString(inputHour, inputMinute) {
+	var hour = parseInt(inputHour);
+	var minute = parseInt(inputMinute);
+	
+	var endString = "AM";
+	if (hour > 11) {
+		endString = "PM";
+	}
+	
+	var humanHour = (hour % 12) + 1;
+	return humanHour + ":" + pad(minute, 2) + " " + endString;
+}
+
+// From stackoverflow: http://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
+function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+function generateDayString(boolArray) {
+	var dayStrings = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+	var returnString = "";
+	for (var index = 0; index < boolArray.length; index++) {
+		if (boolArray[index]) {
+			returnString += dayStrings[index] + ", ";
+		}
+	}
+	if (returnString.length > 0) {
+		// Chop off last two characters
+		returnString = returnString.slice(0, returnString.length-2);
+	}
+	return returnString;
 }
 
 function showCalendarInformation() {

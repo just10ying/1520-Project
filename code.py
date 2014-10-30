@@ -25,7 +25,7 @@ class MainPage(webapp2.RequestHandler) :
         CourseList(None, user.nickname(), user=user.email(), list=self.request.get("classList")).put()
         self.response.out.write(1)	
     else :
-        self.response.out.write(0)      
+        self.response.out.write(users.create_login_url('/'))      
   
   def get(self) :
     user = users.get_current_user()
