@@ -106,9 +106,10 @@ function showDeckCoursesInCalendar() {
 	});
 }
 
-function updateDeckList() {
+function updateDeckList() { //*******************************************************************************************
 	deckList.length = 0; // Clears the deck array
-	$("#deck").find(".course-card").each(function(index, obj) {
+//	$("#deck").find(".course-card").each(function(index, obj) {
+	$("#deck").find(".course-card.scheduled").each(function(index, obj) { 
 		deckList.push(getCourseWithNumber(obj.getAttribute("catalognumber")));
 	});
 }
@@ -206,6 +207,22 @@ function newRowDiv(stringName) {
 
 function selectCard(card) {
 	$(card).toggleClass("selected");
+	
+	// if $("#deck") has card, toggle with unique color and refresh calendar?? (call selectDeckCard)
+	var d = $("#deck").children(".course-card");
+	for (var i = 0; i < d.length; i++) { //**************************************************************************************************************
+		if (d[i] == card) {
+			selectDeckCard(card);
+		}
+	}
+	refreshCalendar();
+}
+
+function selectDeckCard(card) { // ************************************************************************************************************
+//	if (!($(card).hasClass("scheduled"))) {
+		$(card).toggleClass("scheduled");
+//	}
+//	refreshCalendar();
 }
 
 /* -------------------------------------- Drag and Drop Functions for Course Cards -------------------------------------------------- */
@@ -236,9 +253,15 @@ function dropInSidebar(ev) {
 	refreshCalendar();
 }
 
-function dropInDeck(ev) {
+function dropInDeck(ev) { // ***************************************************************************************************************
     ev.preventDefault();
     var targetCard = $(ev.target).closest(".course-card");
+	
+	// get rid of selected class (so card isn't still highlighted when it is moved to deck) *************************************************
+	if ($(draggedCard).hasClass("selected")) {
+		$(draggedCard).toggleClass("selected");
+	}
+	
 	if (targetCard.length == 0) { // If there's no card in the deck
 		$("#deck").append(draggedCard); // append it directly to the deck.
 	}
@@ -247,7 +270,7 @@ function dropInDeck(ev) {
 	}
 	deckList.push(getCourseWithNumber(draggedCard.getAttribute("catalognumber")));
 	cardDivider.remove();
-	refreshCalendar();
+//	refreshCalendar();
 }
 
 function cardDragOver(card) {
@@ -259,6 +282,7 @@ function cardDragLeave(card) {
 }
 
 //--------------------------------------------------------------------- Calendar Functions ---------------------------------------------------------------------------
+var calendarColors = ['c1','c2','c3','c4','c5','c6'];
 
 // Populates the calendar with rows.  Start and end are integers from 0-23 corresponding to hours.
 function populateCalendarRows(start, end) {
@@ -285,8 +309,10 @@ function calCreateRowSubdivisions() {
 }
 
 // FIX THIS; IT DOESN'T WORK QUITE RIGHT FOR TIME RANGES
-function putCourseOnCalendar(course) {
+function putCourseOnCalendar(course) { //*****************************************************************************************
 	var dayCols = $("#calendar-wrapper").children(".calendar-col");
+	var color = getCalendarColor();
+	
 	for (var index = 0; index < dayCols.length; index++) {
 		// If there is class on that day:
 		if (course.Days[index]) {
@@ -294,10 +320,10 @@ function putCourseOnCalendar(course) {
 			var currentMinute = parseInt(course.StartMinute);
 			while (!isFirstTimeLater(currentHour, currentMinute, parseInt(course.EndHour), parseInt(course.EndMinute))) {
 				if ((currentMinute == 60) && (!areTimesEqual(currentHour + 1, 0, parseInt(course.EndHour), parseInt(course.EndMinute)))){
-					highlightSlot(index, currentHour + 1, 0);
+					highlightSlot(index, currentHour + 1, 0, color);
 				}
 				else {
-					highlightSlot(index, currentHour, currentMinute);
+					highlightSlot(index, currentHour, currentMinute, color);
 				}
 				currentMinute += slotLength;
 				if (currentMinute > 60) {
@@ -331,15 +357,23 @@ function isFirstTimeLater(hourA, minuteA, hourB, minuteB) {
 	}
 }
 
+function getCalendarColor() {
+	if (calendarColors.length > 0) {
+		return 'occupied ' + calendarColors.pop();
+	} else {
+		return 'occupied default';
+	}
+}
+
 // Day is 0-6, Mon-Sun
 // Highlights the slot with the specified time
 // This should never receive minute 60.
-function highlightSlot(day, hourNum, minute) {
+function highlightSlot(day, hourNum, minute, color) { // ******************************************
 	// Finds the element with the specified hour.
 	var dayCols = $("#calendar-wrapper").children(".calendar-col");
 	var hour = $(dayCols[day]).find(".hour" + hourNum);
 	var slotNum = Math.floor(minute/slotLength);
-	hour.find(".calDiv" + slotNum).addClass("occupied");
+	hour.find(".calDiv" + slotNum).addClass(color);
 }
 
 // Calendar Constants:
@@ -410,19 +444,3 @@ function showCalendarInformation() {
 	hidePages();
 	$("#calendar-wrapper").show();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
