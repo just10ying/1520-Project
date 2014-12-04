@@ -1,14 +1,40 @@
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="/css/index.css">
+	<link rel="stylesheet" type="text/css" href="/css/material_design.css">
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link rel="import" href="http://www.polymer-project.org/components/paper-ripple/paper-ripple.html">
+	<link rel="import" href="http://www.polymer-project.org/components/core-icons/core-icons.html">
+	<link rel="import" href="http://www.polymer-project.org/components/font-roboto/roboto.html">
+
 </head>
 <body>
 	<script src="/js/jquery-2.1.1.min.js"></script>
 	<script src="/js/main_page.js"></script>
+	<div id="anchor" class="flex row x-align y-align">
+		<div id="AboutModal" class="dialog modal" width="600px">
+			<div class="content">
+				<div class="title">About</div><br>
+				<div>Scheduling classes can be a headache. We know, we've been there. That's why we created PeopleSofter, an easier way to plan out your semester with a convenient calendar on the side. Just search, drag, and fill up your "deck" with all the classes that interest you. Happy scheduling!</div>
+				<br>
+				<div>Creators: Christine Lim, Justin Ying, Sarah Dubnik</div>
+			</div>
+		
+			<div class="button" onclick="hideAboutModal()">
+				<div class="center" fit>CLOSE</div>
+				<paper-ripple fit></paper-ripple>
+			</div>
+		</div>
+		<div id="SavedModal" class="dialog modal">
+			<div class="content">
+				<div class="title">Saved</div><br>
+				<div>Your class list has been saved successfully.</div>
+			</div>
+		</div>
+	</div>
 	<div id="header" class="flex col static">
 		<div id="navbar" class="flex row">
-			<a href="/about">ABOUT</a>
+			<a onclick="showAboutModal()" class="unselectable">ABOUT</a>
 			{% if login %}
 				<a href="{{login}}">LOGIN</a>
 			{% else %}

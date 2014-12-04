@@ -2,6 +2,9 @@
 $(document).ready(function() {
 	populateCalendarRows(8, 20);
 	$("#deck").hide(); // Hides the deck until cards load in.
+	$("#anchor").hide();
+	$("#AboutModal").hide();
+	$("#SavedModal").hide();
 	loadDeck();
 	hidePages();
 	showCalendarInformation();
@@ -18,6 +21,40 @@ $(document).keydown(function(event) {
 // Populate the course list array
 var courseList = new Array();
 var deckList = new Array();
+
+//--------------------------------------------------------------------- Modal Functions ---------------------------------------------------------------------------
+function showAboutModal() {
+	showAnchor();
+	$("#AboutModal").fadeIn();
+}
+
+function hideAboutModal() {
+	$("#AboutModal").fadeOut(400, function() {
+		hideAnchor();
+	});
+	
+}
+
+function showSavedModal() {
+	showAnchor();
+	$("#SavedModal").fadeIn();
+}
+
+function hideSavedModal() {
+	$("#SavedModal").fadeOut(400, function() {
+		hideAnchor();
+	});
+}
+
+function showAnchor() {
+	$("#anchor").show();
+	$("#anchor").css("z-index", 5);
+}
+
+function hideAnchor() {
+	$("#anchor").css("z-index", -5);
+	$("#anchor").hide();
+}
 
 //--------------------------------------------------------------------- Search Functions ---------------------------------------------------------------------------
 function searchKeyPress(event) {
@@ -142,7 +179,11 @@ function saveDeck() {
 		success: function(data) {
 			// Handle save dialog box here.
 			if (data ==  1) {
-				alert("Saved!");
+				// Save successful.
+				showSavedModal();
+				setTimeout(function() {
+					hideSavedModal();
+				}, 1000);
 			}
 			else {
 				window.location.replace(data);

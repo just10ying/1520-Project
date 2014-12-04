@@ -77,6 +77,27 @@ body {
 }
 
 /* --------------------------------------------- */
+#anchor {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -5;
+	transition: .4s;
+    background:rgba(112, 112, 112, 0.75);
+}
+
+#AboutModal {
+	position: relative;
+	width: 60%;
+	font-size: 120%;
+    background:rgba(255, 255, 255, 1);
+}
+
+.modal .button {
+}
+
 #header {
 	color: white;
 	background-color: #03a9f4;
