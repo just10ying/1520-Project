@@ -171,6 +171,7 @@ function loadDeck() {
 					}
 				}
 			}
+			//alert(data);
 			refreshCalendar();
 		}
 	});
