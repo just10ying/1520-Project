@@ -5,8 +5,11 @@ from google.appengine.api import users
 from google.appengine.ext import db
 from google.appengine.api import memcache
 import logging
+from django.utils import simplejson as json
 
 logging.getLogger().setLevel(logging.DEBUG)
+
+# Run initialization functions.
 
 class CourseList(db.Model):
 	list = db.StringProperty()
@@ -16,6 +19,61 @@ def render_template(handler, templatename, templatevalues):
 	path = os.path.join(os.path.dirname(__file__), "templates/" + templatename)
 	html = template.render(path, templatevalues)
 	handler.response.out.write(html)
+	
+def getStaticFileContents(dirName):
+	path = os.path.join(os.path.split(__file__)[0], dirName)
+	return file(path, 'r').read()
+
+# -------------------------------------------------------------- Code for Populating the Server Course List ------------------------------------------------------------------
+	
+# Global object that has class data.
+class_list_object = None
+search_array = []
+
+def init():
+	class_json = getStaticFileContents("classes/classes_list.json")
+	global class_list_object
+	class_list_object = json.loads(class_json)
+
+def DoesCourseContainsSearchTerm(course, search_string):
+	for value in course.itervalues():
+		if type(value) is unicode:
+			if search_string.lower() in value.lower():
+				return True
+	return False
+	
+def PopulateSearchArray(search_string):
+	global class_list_object
+	global search_array
+	search_array = []
+	for course in class_list_object["classes"]:
+		if DoesCourseContainsSearchTerm(course, search_string):
+			search_array.append(course)
+	
+def CreateJsonFromSearchArray():
+	global search_array
+	return json.dumps(search_array)
+	
+# Run init on startup.
+init()	
+	
+class ClassSearch(webapp2.RequestHandler):
+	def post(self):
+		search_string = self.request.get("search_term")
+		PopulateSearchArray(search_string)
+		json_return = CreateJsonFromSearchArray()
+		self.response.out.write(json_return)
+	def get(self):
+		course_id = self.request.get("course_id")
+		global class_list_object
+		for course in class_list_object["classes"]:
+			if int(course["ClassNum"]) == int(course_id):
+				self.response.out.write(json.dumps(course))
+				return
+		self.response.out.write("Error")
+		
+
+# --------------------------------------------------------------------------------------------------------------------------------
 	
 class MainPage(webapp2.RequestHandler):
 	def post(self):
@@ -67,5 +125,6 @@ class LoadCourses(webapp2.RequestHandler):
 					
 app = webapp2.WSGIApplication([
 	("/", MainPage),
-	("/load_courses", LoadCourses)
+	("/load_courses", LoadCourses),
+	("/search", ClassSearch)
 ])

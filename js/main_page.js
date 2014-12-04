@@ -1,6 +1,7 @@
 //--------------------------------------------------------------------- Initialization ---------------------------------------------------------------------------
 $(document).ready(function() {
 	populateCalendarRows(8, 20);
+	$("#deck").hide(); // Hides the deck until cards load in.
 	loadDeck();
 	hidePages();
 	showCalendarInformation();
@@ -13,10 +14,6 @@ $(document).keydown(function(event) {
 		$("#course-search-box").focus();
 	}
 });
-
-$.getJSON( "classes/classes_list.json", function(data) {
-	courseCatalog = data.classes;
-}).fail(function(){alert("JSON load failure!");});
 
 // Populate the course list array
 var courseList = new Array();
@@ -32,40 +29,35 @@ function searchKeyPress(event) {
 		$("#course-search-box").val('');
 		return;
 	}
-	// Get the search string that the user is typing
-	var searchString = $("#course-search-box").val().toLowerCase();
-	
-	if (searchString.length > 1) {
-		// Check each course for relevant strings
-		courseCatalog.forEach(function(course) {
-			for (field in course) {
-				// If one of the fields has a substring that matches the search term, display the course.
-				// More complex logic should go here as the course object becomes more complex.
-				if ((typeof course[field] == "string") && (course[field].toLowerCase().indexOf(searchString) > -1)) {
-					addCourseToSidebar(course);
-					break;
-				}
-				// Timeslot logic here
-				else if (course[field].type == "timeslot") {
-					
-				}
+	// If the user presses enter, send the search term to the server.
+	if (event.keyCode == 13) {
+		var search_text = $("#course-search-box").val().toLowerCase();
+		$.ajax({
+			url: "/search",
+			type: "POST",
+			data: {search_term: search_text}
+		}).done(function(msg) {
+			var search_results = JSON.parse(msg);
+			for (var index = 0; index < search_results.length; index++) {
+				addCourseToSidebar(search_results[index]);
 			}
-		});
-		// Remove duplicate courses from sidebar
-		$("#deck").children().each(function(index, courseDomObj){
-			removeCourseFromSidebar($(courseDomObj).attr("catalognumber"));
+			$("#deck").children().each(function(index, courseDomObj){
+				removeCourseFromSidebar($(courseDomObj).attr("catalognumber"));
+			});
 		});
 	}
+	// Get the search string that the user is typing
+	var searchString = $("#course-search-box").val().toLowerCase();
 }
 
-function getCourseWithNumber(number) {
-	var returnCourse = null;
-	courseCatalog.forEach(function(course) {
-		if (course.CatalogNumber == number) {
-			returnCourse = course;
-		}
+function getCourseWithNumber(number, callback) {
+	$.ajax({
+		url: "/search",
+		type: "GET",
+		data: {course_id: number}
+	}).done(function(msg) {
+		callback(JSON.parse(msg));
 	});
-	return returnCourse;
 }
 //--------------------------------------------------------------------- Deck Functions ---------------------------------------------------------------------------
 
@@ -109,7 +101,9 @@ function showDeckCoursesInCalendar() {
 function updateDeckList() {
 	deckList.length = 0; // Clears the deck array
 	$("#deck").find(".course-card").each(function(index, obj) {
-		deckList.push(getCourseWithNumber(obj.getAttribute("catalognumber")));
+		getCourseWithNumber(obj.getAttribute("catalognumber"), function(course) {
+			deckList.push(course);
+		});
 	});
 }
 
@@ -158,22 +152,42 @@ function saveDeck() {
 	});
 }
 
+// Remembers the number of loaded courses.
+var numLoaded;
+
 function loadDeck() {
 	$.ajax({
 		type: "GET",
 		url: "/load_courses",
 		success: function(data) {
+			// Justin: I know this is a horrible way to do it, but Sarah just wrote the memcache code for this and I feel bad asking her to change it.
+			// In production code, this get request would return the JSON representations of the saved course objects.
+			// That would eliminate a get request for each of the courses in course list when the information should all be processed on the server at one point in time.
 			var classNumberArray = data.split(',');
+			numLoaded = 0;
 			for (var index = 0; index < classNumberArray.length; index++) {
-				for (var list_index = 0; list_index < courseCatalog.length; list_index++) {
-					if (classNumberArray[index] == courseCatalog[list_index].CatalogNumber) {
-						addCourseToDeck(courseCatalog[list_index]);
+				$.ajax({
+					type: "GET",
+					url: "/search",
+					data: {course_id: classNumberArray[index]}
+				}).done(function(data) {
+					var course = JSON.parse(data);
+					addCourseToDeck(course);
+					// Increment the number of cards that were loaded.
+					numLoaded++;
+					// If this is the last card, show the column.
+					if (numLoaded == classNumberArray.length) {
+						$("#loading-div").hide();
+						$("#deck").fadeIn();
 					}
-				}
+				});
 			}
-			//alert(data);
 			refreshCalendar();
 		}
+	}).done(function() {
+		setTimeout(function() {
+			
+		},1000);
 	});
 }
 
@@ -246,7 +260,9 @@ function dropInDeck(ev) {
 	else {
 	    $(ev.target).closest(".course-card").after(draggedCard);	
 	}
-	deckList.push(getCourseWithNumber(draggedCard.getAttribute("catalognumber")));
+	getCourseWithNumber(draggedCard.getAttribute("catalognumber"), function(course) {
+		deckList.push(course);
+	});
 	cardDivider.remove();
 	refreshCalendar();
 }
@@ -356,20 +372,21 @@ function hidePages() {
 
 function showCourseInformation(courseNumber) {
 	hidePages();
-	var course = getCourseWithNumber(courseNumber);
-	$("#course-name").text("Title: " + course.Title);
-	$("#course-teacher").text("Instructors: " + course.Instructors);
-	$("#course-location").text("Location: " + course.Location);
-	$("#course-credits").text("Credits: " + course.NumCredits);
-	$("#course-class-number").text("Catalog Number: " + course.CatalogNumber);
-	$("#course-term").text("Term: " + course.Term);
-	$("#course-type").text("Type: " + course.Type);	
-	$("#course-description").text("Description: " + course.Description);
-	$("#course-days").text("Days: " + generateDayString(course.Days));
-	$("#course-start-time").text("Start time: " + timeToString(course.StartHour, course.StartMinute));
-	$("#course-end-time").text("End time: " + timeToString(course.EndHour, course.EndMinute));
-	
-	$("#course-info-view").show();
+	getCourseWithNumber(courseNumber, function(course) {
+		$("#course-name").text("Title: " + course.Title);
+		$("#course-teacher").text("Instructors: " + course.Instructors);
+		$("#course-location").text("Location: " + course.Location);
+		$("#course-credits").text("Credits: " + course.NumCredits);
+		$("#course-class-number").text("Catalog Number: " + course.CatalogNumber);
+		$("#course-term").text("Term: " + course.Term);
+		$("#course-type").text("Type: " + course.Type);	
+		$("#course-description").text("Description: " + course.Description);
+		$("#course-days").text("Days: " + generateDayString(course.Days));
+		$("#course-start-time").text("Start time: " + timeToString(course.StartHour, course.StartMinute));
+		$("#course-end-time").text("End time: " + timeToString(course.EndHour, course.EndMinute));
+		
+		$("#course-info-view").show();
+	});
 }
 
 function timeToString(inputHour, inputMinute) {

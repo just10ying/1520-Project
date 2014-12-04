@@ -16,6 +16,11 @@ handlers:
 - url: /classes
   static_dir: classes
   mime_type: "application/json"
+  application_readable: true
 
 - url: /.*
   script: code.app
+  
+libraries:
+- name: django
+  version: "latest"

@@ -9,7 +9,6 @@
 	<div id="header" class="flex col static">
 		<div id="navbar" class="flex row">
 			<a href="url">ABOUT</a>
-			<a href="url">SETTINGS</a>
 			{% if login %}
 				<a href="{{login}}">LOGIN</a>
 			{% else %}
@@ -32,6 +31,9 @@
 		<div id="deck" class="flex col std-padding h-edge-shadow" ondrop="dropInDeck(event)" ondragover="allowDrop(event)">
 			<button type="button" onclick="saveDeck()">Save List</button>
 			<!-- cards go here -->
+		</div>
+		<div id="loading-div" class="flex col std-padding h-edge-shadow x-align y-align">
+			Loading...
 		</div>
 		<div id="info-display" class="flex col std-padding grow">
 			<!-- This is initially hidden -->
