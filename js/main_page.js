@@ -107,7 +107,7 @@ function removeCourseFromSidebar(courseNumber) {
 }
 
 function addCourseToDeck(course) {
-	$("#deck").append(new CourseTable(course)); // This does not occur anymore because we're moving the DOM object directly in the drop handler.
+	$("#deck").append(new CourseTable(course)); // This does not occur on drop anymore because we're moving the DOM object directly in the drop handler.
 	deckList.push(course);
 }
 
@@ -129,16 +129,19 @@ function disableDuplicateCard(course) {
 
 function showDeckCoursesInCalendar() {
 	updateDeckList();
-	deckList.forEach(function(course) {
-		putCourseOnCalendar(course);
-	});
+	// We can no longer update the decklist here because it must be in a specific callback.
+	// deckList.forEach(function(course) {
+		// putCourseOnCalendar(course);
+	// });
 }
 
 function updateDeckList() {
 	deckList.length = 0; // Clears the deck array
+	var x = $("#deck").find(".course-card");
 	$("#deck").find(".course-card").each(function(index, obj) {
 		getCourseWithNumber(obj.getAttribute("catalognumber"), function(course) {
 			deckList.push(course);
+			putCourseOnCalendar(course); // Updating the deck list automatically puts courses on the calendar because it must be in this callback function.
 		});
 	});
 }
@@ -223,6 +226,7 @@ function loadDeck() {
 					if (numLoaded == classNumberArray.length) {
 						$("#loading-div").hide();
 						$("#deck").fadeIn();
+						refreshCalendar();
 					}
 				});
 			}
@@ -293,18 +297,38 @@ function drag(ev) {
 // Do we even want the user to be able to drop cards in the sidebar? FIX
 function dropInSidebar(ev) {
     ev.preventDefault();
-	$(draggedCard).remove();
 	// If the item is being dropped on the sidebar, append dragged card.
-	// if (ev.target.id == "card-parent") {
-		// $("#card-parent").append(draggedCard);
-	// }
-	// else {
-		// // If the user is dropping the card on a card, put the dropped card after that card.
-	    // $(ev.target).closest(".course-card").after(draggedCard);
-	// }
-	// cardDivider.remove();
+	if (ev.target.id == "card-parent") {
+		$("#card-parent").append(draggedCard);
+	}
+	else {
+		// If the user is dropping the card on a card, put the dropped card after that card.
+	    $(ev.target).closest(".course-card").after(draggedCard);
+	}
+	
+	// Remove class if it has a color
+	if ($(draggedCard).hasClass("occupied")) { 
+		$(draggedCard).removeClass("occupied");
+	}
+	
+	// Remove conflict class if it has
+	if ($(draggedCard).hasClass("conflict")) { 
+		$(draggedCard).removeClass("conflict");
+	}
+	
+	cardDivider.remove();
 	refreshCalendar();
 }
+
+// This behavior is confusing without additional indication that the card will not be readded to the search list.
+// function dropInSidebar(ev) {
+    // ev.preventDefault();
+	// if ($(draggedCard).parent("#deck").length) {
+		// $(draggedCard).remove();
+	// }
+	// cardDivider.remove();
+	// refreshCalendar();
+// }
 
 function dropInDeck(ev) {
     ev.preventDefault();
@@ -317,9 +341,9 @@ function dropInDeck(ev) {
 	}
 	getCourseWithNumber(draggedCard.getAttribute("catalognumber"), function(course) {
 		deckList.push(course);
+		refreshCalendar();
 	});
 	cardDivider.remove();
-	refreshCalendar();
 }
 
 function cardDragOver(card) {
