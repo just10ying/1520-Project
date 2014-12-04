@@ -97,27 +97,69 @@ function clearDeck() { //*******************************************************
 	
 	refreshCalendar();
 }
-
-function checkForConflicts(card) { // *********************************************************
+/*
+function checkForConflicts(card) { 
 	var d = $("#deck").children(".course-card");
 	var courseA = getCourseWithNumber(card.getAttribute("catalognumber"));
-	for (var i = 0; i < d.length; i++) { //**************************************************************************************************************
+	for (var i = 0; i < d.length; i++) { 
 		// get d[i] course
 		var courseB = getCourseWithNumber(d[i].getAttribute("catalognumber"));
 		
 		// Check if days overlap
-		console.log(generateDayString(courseA.Days));
-		console.log(generateDayString(courseB.Days));
 		if (doDaysOverlap(generateDayString(courseA.Days), generateDayString(courseB.Days))) {
 			// if card is not occupied and days/time conflict, mark conflict
-			if (d[i] != card && !($(d[i]).hasClass("occupied")) && doesTimeOverlap(courseA.startHour, courseA.startMinute, courseA.endHour, courseA.endMinute, 
-												courseB.startHour, courseB.startMinute, courseB.endHour, courseB.endMinute)) {
+			if (d[i] != card && !($(d[i]).hasClass("occupied")) && doesTimeOverlap(courseA.StartHour, courseA.StartMinute, courseA.EndHour, courseA.EndMinute, 
+												courseB.StartHour, courseB.StartMinute, courseB.EndHour, courseB.EndMinute)) {
 			$(card).addClass("conflict");
 			console.log("conflict");
 			}
 		}
 	}
 }
+*/
+
+function checkForConflicts() { 
+	console.log("checking for conflicts");
+	var deckCards = $("#deck").children(".course-card");
+	var selectedCards = $("#deck").children(".course-card.scheduled");
+	
+	// Clear previous conflicts 
+	$(deckCards).removeClass("conflict");
+	
+	// Check all deck cards against all selected cards, mark conflicting deck cards
+	for (var s = 0; s < selectedCards.length; s++) {
+		// Get course
+		var courseA = getCourseWithNumber(selectedCards[s].getAttribute("catalognumber"));
+		
+		for (var d = 0; d < deckCards.length; d++) { 
+			// get deckCards[d] course
+			var courseB = getCourseWithNumber(deckCards[d].getAttribute("catalognumber"));
+			
+			// Check if days overlap
+			if (doDaysOverlap(generateDayString(courseA.Days), generateDayString(courseB.Days))) {
+				// if card is not occupied and days/time conflict, mark conflict
+				if (deckCards[d] != selectedCards[s] && !($(deckCards[d]).hasClass("occupied")) && doesTimeOverlap(courseA.StartHour, courseA.StartMinute, courseA.EndHour, courseA.EndMinute, 
+													courseB.StartHour, courseB.StartMinute, courseB.EndHour, courseB.EndMinute)) {
+					$(deckCards[d]).addClass("conflict");
+					console.log("CONFLICT!");
+				}/* else {
+				// if does not conflict now but previously conflicted, remove conflict class
+					if ($(deckCards[d]).hasClass("conflict")) {
+						console.log("removing conflict class");
+						$(deckCards[d]).removeClass("conflict");
+					}
+				}*/
+			}/* else {
+				// if does not conflict now but previously conflicted, remove conflict class
+				if ($(deckCards[d]).hasClass("conflict")) {
+					console.log("removing conflict class");
+					$(deckCards[d]).removeClass("conflict");
+				}
+			}*/
+		}
+	}
+}
+
 
 // Disables dragging and grays out the course in course-list with the same course number as "card"
 function disableDuplicateCard(course) {
@@ -130,7 +172,7 @@ function showDeckCoursesInCalendar() { //***************************************
 	deckList.forEach(function(course) {
 		putCourseOnCalendar(course, ++count);
 	});
-	console.log('show deck courses in calendar');
+//	console.log('show deck courses in calendar');
 }
 
 function updateDeckList() { //*******************************************************************************************
@@ -148,6 +190,7 @@ function clearCalendar() { // **************************************************
 function refreshCalendar() {
 	console.log('refresh calendar');
 	clearCalendar();
+	checkForConflicts();
 	showDeckCoursesInCalendar();
 }
 
@@ -241,17 +284,22 @@ function selectCard(card) {
 	for (var i = 0; i < d.length; i++) { //**************************************************************************************************************
 		if (d[i] == card) {
 			selectDeckCard(card);
+//			checkForConflicts(card);
 		}
 	}
-	refreshCalendar();
-	
+	refreshCalendar();	
 }
 
 function selectDeckCard(card) { // ************************************************************************************************************
-	// Mark course as scheduled
-	$(card).toggleClass("scheduled");
-	
-	// Highlight this card in the deck
+	// Check if it conflicts
+	if ($(card).hasClass("conflict")) {
+		alert("This class conflicts with something you have already scheduled.");
+	} else {
+		// Mark course as scheduled
+		$(card).toggleClass("scheduled");
+		$(card).toggleClass("");
+		// Highlight this card in the deck
+	}
 }
 
 /* -------------------------------------- Drag and Drop Functions for Course Cards -------------------------------------------------- */
@@ -284,6 +332,11 @@ function dropInSidebar(ev) {
 		$(draggedCard).removeClass("occupied");
 	}
 	
+	// Remove conflict class if it has
+	if ($(draggedCard).hasClass("conflict")) { 
+		$(draggedCard).removeClass("conflict");
+	}
+	
 	cardDivider.remove();
 	refreshCalendar();
 }
@@ -305,7 +358,7 @@ function dropInDeck(ev) { // ***************************************************
 	}
 	deckList.push(getCourseWithNumber(draggedCard.getAttribute("catalognumber")));
 	cardDivider.remove();
-	checkForConflicts(draggedCard);
+	checkForConflicts();
 	refreshCalendar();
 }
 
@@ -345,7 +398,7 @@ function calCreateRowSubdivisions() {
 }
 
 // FIX THIS; IT DOESN'T WORK QUITE RIGHT FOR TIME RANGES
-function putCourseOnCalendar(course, colorNumber) { //*****************************************************************************************
+function putCourseOnCalendar(course, colorNumber) { 
 	var dayCols = $("#calendar-wrapper").children(".calendar-col");
 	var color = getCalendarColor(colorNumber);
 	
@@ -386,18 +439,28 @@ function isTimeWithinRange(botHour, botMinute, topHour, topMinute, hour, minute)
 
 function doesTimeOverlap(startHourA, startMinuteA, endHourA, endMinuteA, startHourB, startMinuteB, endHourB, endMinuteB) {
 	// Check if times start or end at same time (classes overlap)
+	startHourA = parseInt(startHourA);
+	startMinuteA = parseInt(startMinuteA);
+	endHourA = parseInt(endHourA);
+	endMinuteA = parseInt(endMinuteA);
+	startHourB = parseInt(startHourB);
+	startMinuteB = parseInt(startMinuteB);
+	endHourB = parseInt(endHourB);
+	endMinuteB = parseInt(endMinuteB);
+	
 	if (areTimesEqual(startHourA, startMinuteA, startHourB, startMinuteB) || areTimesEqual(endHourA, endMinuteA, endHourB, endMinuteB)) {
 		return true;
 	}
 	// Check if classes overlap in the middle of the time block
-	if (isFirstTimeLater(endHourA, endMinuteA, startHourB, startMinuteB) && isFirstTimeLater(endHourB, endMinuteB, endHourA, endMinuteA)) {
+	if (isFirstTimeLater(endHourA, endMinuteA, startHourB, startMinuteB) && (isFirstTimeLater(endHourB, endMinuteB, endHourA, endMinuteA) || isFirstTimeLater(startHourB, startMinuteB, startHourA, startMinuteA)) ) {
 		return true;
 	}
 	
-	if (isFirstTimeLater(endHourB, endMinuteB, startHourA, startMinuteA) && isFirstTimeLater(endHourA, endMinuteA, endHourB, endMinuteB)) {
+	if (isFirstTimeLater(endHourB, endMinuteB, startHourA, startMinuteA) && (isFirstTimeLater(endHourA, endMinuteA, endHourB, endMinuteB) || isFirstTimeLater(startHourA, startMinuteA, startHourB, startMinuteB)) ) {
 		return true;
 	}
-	
+
+	console.log("no conflicts");
 	return false;
 }
 
@@ -409,7 +472,7 @@ function doDaysOverlap(daysA, daysB) {
 			return true
 		}
 	}
-	
+	console.log("no day overlap");
 	return false;
 }
 
@@ -426,7 +489,6 @@ function isFirstTimeLater(hourA, minuteA, hourB, minuteB) {
 }
 
 function getCalendarColor(colorNumber) {
-	console.log('get calendar color');
 	if (calendarColors.length > colorNumber) {
 		return 'occupied ' + calendarColors[colorNumber];
 	} else {
