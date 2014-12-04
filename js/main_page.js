@@ -200,9 +200,13 @@ function loadDeck() {
 		type: "GET",
 		url: "/load_courses",
 		success: function(data) {
-			// Justin: I know this is a horrible way to do it, but Sarah just wrote the memcache code for this and I feel bad asking her to change it.
+			// Justin says: I know this is a horrible way to do it, but Sarah just wrote the memcache code for this and I feel bad asking her to change it.
 			// In production code, this get request would return the JSON representations of the saved course objects.
 			// That would eliminate a get request for each of the courses in course list when the information should all be processed on the server at one point in time.
+			if (data == "") {
+				$("#loading-div").hide();
+				$("#deck").fadeIn();
+			}
 			var classNumberArray = data.split(',');
 			numLoaded = 0;
 			for (var index = 0; index < classNumberArray.length; index++) {
