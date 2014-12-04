@@ -133,6 +133,7 @@ body {
 	font-size: 75%;
 	transition: .3s;
 	position: relative;
+	background-color: white;
 }
 
 .course-card:hover {
@@ -166,6 +167,14 @@ body {
 
 .course-card.selected * {
 	color: white;
+}
+
+.course-card.scheduled {
+	
+}
+
+.course-card.conflict {
+	background-color: red;
 }
 
 #card-insert-divider {
@@ -223,7 +232,35 @@ body {
 }
 
 #calendar-wrapper .occupied {
+
+}
+
+#calendar-wrapper .occupied.default{
 	background-color: #0288d1;
+}
+
+#calendar-wrapper .occupied.c1 {
+	background-color: #FA5882;
+}
+
+#calendar-wrapper .occupied.c2 {
+	background-color: #9F81F7;
+}
+
+#calendar-wrapper .occupied.c3 {
+	background-color: #F7D358;
+}
+
+#calendar-wrapper .occupied.c4 {
+	background-color: #58FAAC;
+}
+
+#calendar-wrapper .occupied.c5 {
+	background-color: #BDBDBD;
+}
+
+#calendar-wrapper .occupied.c6 {
+	background-color: #5882FA;
 }
 
 /* --------------------Course Info View CSS------------------------- */
