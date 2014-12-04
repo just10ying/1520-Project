@@ -18,7 +18,6 @@ $(document).keydown(function(event) {
 // Populate the course list array
 var courseList = new Array();
 var deckList = new Array();
-var courseCatalog = new Array();
 
 //--------------------------------------------------------------------- Search Functions ---------------------------------------------------------------------------
 function searchKeyPress(event) {
@@ -196,7 +195,7 @@ function loadDeck() {
 // Returns a course table with the proper information
 // Card customization would occur here.
 function CourseTable(course) {
-	var parentDiv = $('<div draggable="true" onclick="selectCard(this)" ondragstart="drag(event)" ondragover="cardDragOver(this)" ondragleave="cardDragLeave(this)"></div>');
+	var parentDiv = $('<div draggable="true" onclick="selectSingleCard(this)" ondragstart="drag(event)" ondragover="cardDragOver(this)" ondragleave="cardDragLeave(this)"></div>');
 		parentDiv.attr("catalognumber", course.CatalogNumber);
 		parentDiv.addClass("course-card flex row static std-margin unselectable");
 	var col1 = $('<div class="card-col-1"></div>')
@@ -223,6 +222,16 @@ function selectCard(card) {
 	$(card).toggleClass("selected");
 }
 
+function selectSingleCard(card) {
+	if ($(card).hasClass("selected")) {
+		$(".course-card").removeClass("selected");
+	}
+	else {
+		$(".course-card").removeClass("selected");
+		$(card).addClass("selected");
+	}
+}
+
 /* -------------------------------------- Drag and Drop Functions for Course Cards -------------------------------------------------- */
 var draggedCard; // Global variable to store the currently dragged card.
 var cardDivider = $('<div id="card-insert-divider"></div>'); // This is a divider to show where the dragged card will be dropped.
@@ -239,15 +248,16 @@ function drag(ev) {
 // Do we even want the user to be able to drop cards in the sidebar? FIX
 function dropInSidebar(ev) {
     ev.preventDefault();
+	$(draggedCard).remove();
 	// If the item is being dropped on the sidebar, append dragged card.
-	if (ev.target.id == "card-parent") {
-		$("#card-parent").append(draggedCard);
-	}
-	else {
-		// If the user is dropping the card on a card, put the dropped card after that card.
-	    $(ev.target).closest(".course-card").after(draggedCard);
-	}
-	cardDivider.remove();
+	// if (ev.target.id == "card-parent") {
+		// $("#card-parent").append(draggedCard);
+	// }
+	// else {
+		// // If the user is dropping the card on a card, put the dropped card after that card.
+	    // $(ev.target).closest(".course-card").after(draggedCard);
+	// }
+	// cardDivider.remove();
 	refreshCalendar();
 }
 

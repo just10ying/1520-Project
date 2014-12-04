@@ -122,9 +122,15 @@ class LoadCourses(webapp2.RequestHandler):
 					CourseList(None, user.nickname(), user = user.email(), list=unsaved_list).put()
 					self.response.out.write(unsaved_list)
 					memcache.delete("classList")
-					
+		
+class AboutPage(webapp2.RequestHandler):
+	def get(self):
+		page_contents = getStaticFileContents("templates/about.html")
+		self.response.out.write(page_contents)
+		
 app = webapp2.WSGIApplication([
 	("/", MainPage),
 	("/load_courses", LoadCourses),
-	("/search", ClassSearch)
+	("/search", ClassSearch),
+	("/about", AboutPage)
 ])
